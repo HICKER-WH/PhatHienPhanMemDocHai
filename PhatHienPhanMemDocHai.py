@@ -308,7 +308,7 @@ st.markdown("""
 st.markdown('''
 <div class="main-header">
     <a href="https://dhkthc.bocongan.gov.vn/TrangChu/" target="_blank" class="logo-container">
-        <img src="https://raw.githubusercontent.com/HickerWH/PhanTichMaDoc/main/Logot07.png" alt="Logo" style="height: 60px;">
+        <img src="https://raw.githubusercontent.com/HICKER-WH/PhatHienPhanMemDocHai/main/Logot07.png" alt="Logo" style="height: 60px;">
     </a>
     <div class="title-container">
         <span class="title-line">🔍 Phát Hiện Phần Mềm Hại</span>
