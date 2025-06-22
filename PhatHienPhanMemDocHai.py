@@ -1167,18 +1167,18 @@ with tab2:
                     st.session_state['scan_dir'] = folder_path
                     st.session_state['do_scan'] = True
 
-        # # Cấu hình quét nâng cao
-        # with st.expander("⚙️ Cấu hình quét nâng cao"):
-        #     col1, col2, col3 = st.columns(3)
+        # Cấu hình quét nâng cao
+        with st.expander("⚙️ Cấu hình quét nâng cao"):
+            col1, col2, col3 = st.columns(3)
             
-        #     with col1:
-        #         min_size_kb = st.number_input("Kích thước file tối thiểu (KB)", value=0, min_value=0, max_value=1000)
+            with col1:
+                min_size_kb = st.number_input("Kích thước file tối thiểu (KB)", value=0, min_value=0, max_value=1000)
                 
-        #     with col2:
-        #         max_size_mb = st.number_input("Kích thước file tối đa (MB)", value=max_file_size, min_value=1, max_value=max_file_size)
+            with col2:
+                max_size_mb = st.number_input("Kích thước file tối đa (MB)", value=max_file_size, min_value=1, max_value=max_file_size)
                 
-        #     with col3:
-        #         analysis_depth = st.selectbox("Độ sâu phân tích", ["Nhanh", "Cân bằng", "Sâu"])
+            with col3:
+                analysis_depth = st.selectbox("Độ sâu phân tích", ["Nhanh", "Cân bằng", "Sâu"])
 
         # Thực hiện quét nếu có yêu cầu
         if st.session_state.get('do_scan', False):
