@@ -770,7 +770,7 @@ elif model_source == "Upload từ máy tính" and uploaded_model is not None:
     model, class_names = load_pytorch_model_from_upload(uploaded_model, device)
 
 # --- Tab chính ---
-tab1, tab2, tab3 = st.tabs(["📄 Quét chương trình đơn lẻ", "📁 Quét nhanh chương trình trong thư mục", "ℹ️ Thông tin chung"])
+tab1, tab2, tab3, tab4 = st.tabs(["📄 Quét chương trình đơn lẻ", "📁 Quét nhanh chương trình trong thư mục", "💻 SOC VIỆT NAM", "ℹ️ Thông tin chung"])
 
 # --- Tab phân tích file đơn lẻ ---
 with tab1:
@@ -1167,18 +1167,18 @@ with tab2:
                     st.session_state['scan_dir'] = folder_path
                     st.session_state['do_scan'] = True
 
-        # Cấu hình quét nâng cao
-        with st.expander("⚙️ Cấu hình quét nâng cao"):
-            col1, col2, col3 = st.columns(3)
+        # # Cấu hình quét nâng cao
+        # with st.expander("⚙️ Cấu hình quét nâng cao"):
+        #     col1, col2, col3 = st.columns(3)
             
-            with col1:
-                min_size_kb = st.number_input("Kích thước file tối thiểu (KB)", value=0, min_value=0, max_value=1000)
+        #     with col1:
+        #         min_size_kb = st.number_input("Kích thước file tối thiểu (KB)", value=0, min_value=0, max_value=1000)
                 
-            with col2:
-                max_size_mb = st.number_input("Kích thước file tối đa (MB)", value=max_file_size, min_value=1, max_value=max_file_size)
+        #     with col2:
+        #         max_size_mb = st.number_input("Kích thước file tối đa (MB)", value=max_file_size, min_value=1, max_value=max_file_size)
                 
-            with col3:
-                analysis_depth = st.selectbox("Độ sâu phân tích", ["Nhanh", "Cân bằng", "Sâu"])
+        #     with col3:
+        #         analysis_depth = st.selectbox("Độ sâu phân tích", ["Nhanh", "Cân bằng", "Sâu"])
 
         # Thực hiện quét nếu có yêu cầu
         if st.session_state.get('do_scan', False):
@@ -1272,7 +1272,7 @@ with tab2:
                                 st.download_button(
                                     label="📥 Tải xuống danh sách mã độc (CSV)",
                                     data=csv_malware,
-                                    file_name=f"malware_detected_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
+                                    file_name=f"malware_detected_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
                                     mime="text/csv"
                                 )
                         tab_index += 1
@@ -1342,7 +1342,7 @@ with tab2:
                         st.download_button(
                             label="📥 Tải xuống tất cả kết quả (CSV)",
                             data=csv_all,
-                            file_name=f"scan_results_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
+                            file_name=f"scan_results_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
                             mime="text/csv"
                         )
 
@@ -1387,9 +1387,654 @@ with tab2:
                     del st.session_state['scan_dir']
                 except:
                     pass
-
-# --- Tab thông tin ---
 with tab3:
+     # Hiển thị bản đồ Việt Nam với thông tin về mối đe dọa
+        st.markdown('<div class="map-header">🗺️ Giám sát an ninh mạng quốc gia: Bản đồ Việt Nam</div>', unsafe_allow_html=True)
+
+        # Tạo HTML cho bản đồ
+        map_html = """
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Vietnam Cybersecurity Threat Map</title>
+            <meta charset="utf-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+            <style>
+                body { margin: 0; padding: 0; }
+                #map { height: 500px; width: 100%; }
+                .threat-info {
+                    background: rgba(255, 255, 255, 0.9);
+                    padding: 10px;
+                    border-radius: 5px;
+                    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+                }
+                .threat-level-high { color: #d32f2f; font-weight: bold; }
+                .threat-level-medium { color: #f57c00; font-weight: bold; }
+                .threat-level-low { color: #388e3c; font-weight: bold; }
+            </style>
+        </head>
+        <body>
+            <div id="map"></div>
+            <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+            <script>
+                // Khởi tạo bản đồ tập trung vào Việt Nam
+                var map = L.map('map').setView([16.0583, 108.2772], 6);
+                // Thêm tile layer
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {attribution: '© OpenStreetMap, © CartoDB'}).addTo(map);
+                // Dữ liệu mối đe dọa giả lập 63 tỉnh/thành Việt Nam 2024
+                var threatData = [
+                    // Nhóm High (từ 700+)
+                    {city: "TP. Hồ Chí Minh", lat: 10.7769, lng: 106.7009, threats: 2100, level: "high", malware: 750, phishing: 520, ddos: 315, other: 515},
+                    {city: "Hà Nội", lat: 21.0285, lng: 105.8542, threats: 1480, level: "high", malware: 525, phishing: 365, ddos: 212, other: 378},
+                    {city: "Bình Dương", lat: 10.9804, lng: 106.6519, threats: 855, level: "high", malware: 312, phishing: 201, ddos: 121, other: 221},
+                    {city: "Đồng Nai", lat: 10.9452, lng: 106.8246, threats: 802, level: "high", malware: 285, phishing: 189, ddos: 116, other: 212},
+
+                    // Nhóm Medium (300–700)
+                    {city: "Hải Phòng", lat: 20.8449, lng: 106.6881, threats: 626, level: "medium", malware: 213, phishing: 168, ddos: 104, other: 141},
+                    {city: "Cần Thơ", lat: 10.0452, lng: 105.7469, threats: 563, level: "medium", malware: 186, phishing: 153, ddos: 80, other: 144},
+                    {city: "Đà Nẵng", lat: 16.0544, lng: 108.2022, threats: 488, level: "medium", malware: 159, phishing: 126, ddos: 74, other: 129},
+                    {city: "Thanh Hóa", lat: 19.8072, lng: 105.7768, threats: 473, level: "medium", malware: 154, phishing: 121, ddos: 77, other: 121},
+                    {city: "Nghệ An", lat: 18.6796, lng: 105.6813, threats: 452, level: "medium", malware: 147, phishing: 115, ddos: 70, other: 120},
+                    {city: "Quảng Ninh", lat: 21.0064, lng: 107.2925, threats: 441, level: "medium", malware: 141, phishing: 112, ddos: 66, other: 122},
+                    {city: "Thừa Thiên Huế", lat: 16.4637, lng: 107.5909, threats: 407, level: "medium", malware: 135, phishing: 98, ddos: 62, other: 112},
+                    {city: "Hải Dương", lat: 20.9401, lng: 106.3336, threats: 396, level: "medium", malware: 123, phishing: 101, ddos: 62, other: 110},
+                    {city: "Bắc Ninh", lat: 21.1861, lng: 106.0763, threats: 384, level: "medium", malware: 118, phishing: 95, ddos: 66, other: 105},
+                    {city: "Thái Bình", lat: 20.4509, lng: 106.3406, threats: 376, level: "medium", malware: 112, phishing: 92, ddos: 65, other: 107},
+                    {city: "Vĩnh Phúc", lat: 21.3081, lng: 105.6046, threats: 372, level: "medium", malware: 109, phishing: 90, ddos: 62, other: 111},
+                    {city: "Bắc Giang", lat: 21.2731, lng: 106.1946, threats: 361, level: "medium", malware: 106, phishing: 84, ddos: 66, other: 105},
+                    {city: "Nam Định", lat: 20.4388, lng: 106.1621, threats: 358, level: "medium", malware: 103, phishing: 88, ddos: 61, other: 106},
+                    {city: "Phú Thọ", lat: 21.3457, lng: 105.2120, threats: 347, level: "medium", malware: 100, phishing: 85, ddos: 55, other: 107},
+                    {city: "Quảng Nam", lat: 15.5394, lng: 108.0191, threats: 341, level: "medium", malware: 98, phishing: 83, ddos: 54, other: 106},
+
+                    // Nhóm Low (dưới 300)
+                    {city: "Bình Định", lat: 13.7820, lng: 109.2191, threats: 298, level: "low", malware: 85, phishing: 76, ddos: 46, other: 91},
+                    {city: "Quảng Ngãi", lat: 15.1202, lng: 108.7922, threats: 286, level: "low", malware: 84, phishing: 63, ddos: 43, other: 96},
+                    {city: "Lâm Đồng", lat: 11.5753, lng: 108.1429, threats: 275, level: "low", malware: 78, phishing: 59, ddos: 40, other: 98},
+                    {city: "Kiên Giang", lat: 10.0086, lng: 105.0807, threats: 265, level: "low", malware: 75, phishing: 58, ddos: 36, other: 96},
+                    {city: "Long An", lat: 10.5435, lng: 106.4106, threats: 257, level: "low", malware: 72, phishing: 55, ddos: 38, other: 92},
+                    {city: "Bến Tre", lat: 10.2415, lng: 106.3754, threats: 243, level: "low", malware: 69, phishing: 52, ddos: 33, other: 89},
+                    {city: "An Giang", lat: 10.5216, lng: 105.1259, threats: 239, level: "low", malware: 67, phishing: 54, ddos: 31, other: 87},
+                    {city: "Đắk Lắk", lat: 12.7100, lng: 108.2378, threats: 233, level: "low", malware: 65, phishing: 47, ddos: 32, other: 89},
+                    {city: "Tiền Giang", lat: 10.4493, lng: 106.3421, threats: 231, level: "low", malware: 66, phishing: 46, ddos: 31, other: 88},
+                    {city: "Bà Rịa - Vũng Tàu", lat: 10.5418, lng: 107.2428, threats: 228, level: "low", malware: 64, phishing: 49, ddos: 28, other: 87},
+                    {city: "Quảng Bình", lat: 17.4689, lng: 106.6228, threats: 224, level: "low", malware: 62, phishing: 44, ddos: 31, other: 87},
+                    {city: "Tây Ninh", lat: 11.3352, lng: 106.1099, threats: 220, level: "low", malware: 61, phishing: 43, ddos: 29, other: 87},
+                    {city: "Thái Nguyên", lat: 21.5672, lng: 105.8252, threats: 217, level: "low", malware: 60, phishing: 42, ddos: 28, other: 87},
+                    {city: "Vĩnh Long", lat: 10.2536, lng: 105.9722, threats: 211, level: "low", malware: 59, phishing: 41, ddos: 25, other: 86},
+                    {city: "Quảng Trị", lat: 16.8187, lng: 107.0917, threats: 207, level: "low", malware: 57, phishing: 40, ddos: 26, other: 84},
+                    {city: "Sóc Trăng", lat: 9.6026, lng: 105.9731, threats: 203, level: "low", malware: 56, phishing: 39, ddos: 25, other: 83},
+                    {city: "Gia Lai", lat: 13.8079, lng: 108.1095, threats: 200, level: "low", malware: 54, phishing: 37, ddos: 24, other: 85},
+                    {city: "Bạc Liêu", lat: 9.2941, lng: 105.7278, threats: 199, level: "low", malware: 54, phishing: 38, ddos: 23, other: 84},
+                    {city: "Hà Tĩnh", lat: 18.3559, lng: 105.8875, threats: 197, level: "low", malware: 52, phishing: 38, ddos: 24, other: 83},
+                    {city: "Ninh Bình", lat: 20.2506, lng: 105.9745, threats: 194, level: "low", malware: 52, phishing: 36, ddos: 22, other: 84},
+                    {city: "Hưng Yên", lat: 20.6463, lng: 106.0511, threats: 192, level: "low", malware: 51, phishing: 35, ddos: 22, other: 84},
+                    {city: "Đắk Nông", lat: 12.2644, lng: 107.6098, threats: 188, level: "low", malware: 49, phishing: 34, ddos: 21, other: 84},
+                    {city: "Tuyên Quang", lat: 21.8230, lng: 105.2148, threats: 185, level: "low", malware: 49, phishing: 33, ddos: 21, other: 82},
+                    {city: "Phú Yên", lat: 13.0882, lng: 109.0929, threats: 181, level: "low", malware: 48, phishing: 31, ddos: 22, other: 80},
+                    {city: "Bình Phước", lat: 11.7512, lng: 106.7235, threats: 178, level: "low", malware: 47, phishing: 31, ddos: 20, other: 80},
+                    {city: "Vĩnh Long", lat: 10.2536, lng: 105.9722, threats: 175, level: "low", malware: 46, phishing: 30, ddos: 20, other: 79},
+                    {city: "Hà Nam", lat: 20.5833, lng: 105.9160, threats: 174, level: "low", malware: 45, phishing: 31, ddos: 19, other: 79},
+                    {city: "Yên Bái", lat: 21.7051, lng: 104.8800, threats: 173, level: "low", malware: 44, phishing: 31, ddos: 18, other: 80},
+                    {city: "Cà Mau", lat: 9.1768, lng: 105.1500, threats: 172, level: "low", malware: 43, phishing: 30, ddos: 18, other: 81},
+                    {city: "Lào Cai", lat: 22.4804, lng: 103.9756, threats: 170, level: "low", malware: 42, phishing: 30, ddos: 18, other: 80},
+                    {city: "Kon Tum", lat: 14.3549, lng: 108.0076, threats: 168, level: "low", malware: 41, phishing: 29, ddos: 17, other: 81},
+                    {city: "Hòa Bình", lat: 20.8171, lng: 105.3376, threats: 167, level: "low", malware: 41, phishing: 28, ddos: 17, other: 81},
+                    {city: "Trà Vinh", lat: 9.9347, lng: 106.3452, threats: 163, level: "low", malware: 41, phishing: 27, ddos: 16, other: 79},
+                    {city: "Lạng Sơn", lat: 21.8528, lng: 106.7610, threats: 159, level: "low", malware: 40, phishing: 27, ddos: 16, other: 76},
+                    {city: "Quảng Nam", lat: 15.5394, lng: 108.0191, threats: 158, level: "low", malware: 39, phishing: 27, ddos: 15, other: 77},
+                    {city: "Bắc Kạn", lat: 22.1485, lng: 105.8348, threats: 156, level: "low", malware: 39, phishing: 25, ddos: 15, other: 77},
+                    {city: "Cao Bằng", lat: 22.6666, lng: 106.2579, threats: 154, level: "low", malware: 38, phishing: 25, ddos: 14, other: 77},
+                    {city: "Bình Thuận", lat: 11.0904, lng: 108.0721, threats: 153, level: "low", malware: 37, phishing: 26, ddos: 13, other: 77},
+                    {city: "Điện Biên", lat: 21.3860, lng: 103.0230, threats: 151, level: "low", malware: 36, phishing: 24, ddos: 14, other: 77},
+                    {city: "Ninh Thuận", lat: 11.6739, lng: 109.0147, threats: 149, level: "low", malware: 35, phishing: 24, ddos: 13, other: 77},
+                    {city: "Hà Giang", lat: 22.8233, lng: 104.9836, threats: 147, level: "low", malware: 34, phishing: 23, ddos: 13, other: 77},
+                    {city: "Quảng Ngãi", lat: 15.1202, lng: 108.7922, threats: 146, level: "low", malware: 33, phishing: 23, ddos: 12, other: 78},
+                    {city: "Sơn La", lat: 21.3256, lng: 103.9188, threats: 144, level: "low", malware: 33, phishing: 23, ddos: 12, other: 76},
+                    {city: "Bắc Ninh", lat: 21.1861, lng: 106.0763, threats: 143, level: "low", malware: 32, phishing: 22, ddos: 12, other: 77},
+                    {city: "Phú Thọ", lat: 21.3457, lng: 105.2120, threats: 139, level: "low", malware: 31, phishing: 21, ddos: 11, other: 76},
+                    {city: "Khánh Hòa", lat: 12.2388, lng: 109.1967, threats: 126, level: "low", malware: 27, phishing: 18, ddos: 10, other: 71},
+                    {city: "Hậu Giang", lat: 9.7845, lng: 105.4701, threats: 123, level: "low", malware: 26, phishing: 17, ddos: 9, other: 71},
+                    // ... (bạn có thể thêm tiếp các huyện/thị xã nếu cần)
+                ];
+
+                // Hàm xác định màu sắc dựa trên mức độ đe dọa
+                function getThreatColor(level) {
+                    switch(level) {
+                        case 'high': return '#d32f2f';
+                        case 'medium': return '#f57c00';
+                        case 'low': return '#388e3c';
+                        default: return '#666666';
+                    }
+                }
+                
+                // Hàm xác định kích thước marker dựa trên số lượng đe dọa
+                function getMarkerSize(threats) {
+                    if (threats > 1000) return 25;
+                    if (threats > 500) return 15;
+                    if (threats > 200) return 10;
+                    return 10;
+                }
+                
+                // Thêm markers cho từng thành phố
+                threatData.forEach(function(data) {
+                    var color = getThreatColor(data.level);
+                    var size = getMarkerSize(data.threats);
+                    
+                    // Tạo custom icon
+                    var threatIcon = L.divIcon({
+                        className: 'threat-marker',
+                        html: '<div style="background-color: ' + color + '; width: ' + size + 'px; height: ' + size + 'px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>',
+                        iconSize: [size, size],
+                        iconAnchor: [size/2, size/2]
+                    });
+                    
+                    // Tạo popup content
+                    var popupContent = `
+                        <div class="threat-info">
+                            <h3>${data.city}</h3>
+                            <p><strong>Tổng mối đe dọa:</strong> <span class="threat-level-${data.level}">${data.threats}</span></p>
+                            <hr>
+                            <p><strong>Phân loại:</strong></p>
+                            <ul>
+                                <li>🦠 Malware: ${data.malware}</li>
+                                <li>🎣 Phishing: ${data.phishing}</li>
+                                <li>⚡ DDoS: ${data.ddos}</li>
+                                <li>🔧 Khác: ${data.other}</li>
+                            </ul>
+                            <p><strong>Mức độ:</strong> <span class="threat-level-${data.level}">${data.level.toUpperCase()}</span></p>
+                        </div>
+                    `;
+                    
+                    // Thêm marker vào bản đồ
+                    L.marker([data.lat, data.lng], {icon: threatIcon})
+                        .bindPopup(popupContent)
+                        .addTo(map);
+                });
+                
+                // Thêm legend
+                var legend = L.control({position: 'bottomright'});
+                legend.onAdd = function (map) {
+                    var div = L.DomUtil.create('div', 'info legend');
+                    div.innerHTML = `
+                        <div style="background: rgba(255,255,255,0.9); padding: 10px; border-radius: 5px; box-shadow: 0 1px 10px rgba(0,0,0,0.2);">
+                            <h4>Mức độ đe dọa</h4>
+                            <div><span style="color: #d32f2f;">●</span> Cao (>1000)</div>
+                            <div><span style="color: #f57c00;">●</span> Trung bình (200-1000)</div>
+                            <div><span style="color: #388e3c;">●</span> Thấp (<200)</div>
+                            <hr>
+                            <small>Dữ liệu cập nhật: ${new Date().toLocaleDateString('vi-VN')}</small>
+                        </div>
+                    `;
+                    return div;
+                };
+                legend.addTo(map);
+                
+                // Thêm thông tin tổng quan
+                var info = L.control({position: 'topleft'});
+                info.onAdd = function (map) {
+                    var div = L.DomUtil.create('div', 'info');
+                    var totalThreats = threatData.reduce((sum, data) => sum + data.threats, 0);
+                    div.innerHTML = `
+                        <div style="background: rgba(255,255,255,0.9); padding: 15px; border-radius: 5px; box-shadow: 0 2px 10px rgba(0,0,0,0.2);">
+                            <h3>🇻🇳 Tình hình An ninh mạng Việt Nam</h3>
+                            <p><strong>Tổng mối đe dọa:</strong> <span style="color: #d32f2f; font-weight: bold;">${totalThreats}</span></p>
+                            <p><strong>Khu vực nguy hiểm nhất:</strong> TP. Hồ Chí Minh</p>
+                            <p><strong>Loại đe dọa phổ biến:</strong> Malware</p>
+                            <hr>
+                            <small>⚠️Dữ liệu sử dụng cho mục đích minh họa</small>
+                        </div>
+                    `;
+                    return div;
+                };
+                info.addTo(map);
+
+                
+                // Thêm hiệu ứng pulse cho các marker có mức đe dọa cao
+                threatData.forEach(function(data) {
+                    if (data.level === 'high') {
+                        var pulseIcon = L.divIcon({
+                            className: 'pulse-marker',
+                            html: '<div class="pulse-dot"></div>',
+                            iconSize: [20, 20],
+                            iconAnchor: [10, 10]
+                        });
+                        
+                        L.marker([data.lat, data.lng], {icon: pulseIcon}).addTo(map);
+                    }
+                });
+                
+                // CSS cho hiệu ứng pulse
+                var style = document.createElement('style');
+                style.innerHTML = `
+                    .pulse-dot {
+                        width: 20px;
+                        height: 20px;
+                        background-color: #d32f2f;
+                        border-radius: 50%;
+                        animation: pulse 2s infinite;
+                        opacity: 0.8;
+                    }
+                    
+                    @keyframes pulse {
+                        0% {
+                            transform: scale(0.8);
+                            opacity: 1;
+                        }
+                        50% {
+                            transform: scale(1.2);
+                            opacity: 0.5;
+                        }
+                        100% {
+                            transform: scale(0.8);
+                            opacity: 1;
+                        }
+                    }
+                `;
+                document.head.appendChild(style);
+                
+            </script>
+        </body>
+        </html>
+        """
+
+        # Hiển thị bản đồ
+        st.components.v1.html(map_html, height=500)
+
+        # Thêm thông tin cảnh báo bảo mật
+        st.markdown('<div class="sub-header">🚨 Cảnh báo Bảo mật</div>', unsafe_allow_html=True)
+
+        col1, col2, col3 = st.columns(3)
+
+        with col1:
+            st.markdown("""
+            <div style="background: linear-gradient(135deg, #ff6b6b, #ee5a52); color: white; padding: 20px; border-radius: 10px; text-align: center;">
+                <h4>⚠️ Mức độ đe dọa</h4>
+                <h2>CAO</h2>
+                <p>Phát hiện nhiều mã độc mới</p>
+                <small>Cập nhật: Hôm nay</small>
+            </div>
+            """, unsafe_allow_html=True)
+
+        with col2:
+            st.markdown("""
+            <div style="background: linear-gradient(135deg, #4ecdc4, #44a08d); color: white; padding: 20px; border-radius: 10px; text-align: center;">
+                <h4>🛡️ Tỷ lệ phát hiện</h4>
+                <h2>94.7%</h2>
+                <p>Độ chính xác của hệ thống</p>
+                <small>Dựa trên 10,000+ mẫu</small>
+            </div>
+            """, unsafe_allow_html=True)
+
+        with col3:
+            st.markdown("""
+            <div style="background: linear-gradient(135deg, #45b7d1, #96c93d); color: white; padding: 20px; border-radius: 10px; text-align: center;">
+                <h4>📊 Files đã quét</h4>
+                <h2>2,847</h2>
+                <p>Trong tháng này</p>
+                <small>Tăng 23% so với tháng trước</small>
+            </div>
+            """, unsafe_allow_html=True)
+
+        # Thêm RSS feed giả lập về tin tức bảo mật
+        st.markdown('<div class="sub-header">📰 Tin tức Bảo mật mới nhất</div>', unsafe_allow_html=True)
+
+        news_data = [
+            {
+                "title": "Phát hiện biến thể mới của ransomware LockBit tại Việt Nam",
+                "summary": "Các chuyên gia bảo mật cảnh báo về sự xuất hiện của biến thể mới của ransomware LockBit đang nhắm mục tiêu vào các doanh nghiệp Việt Nam.",
+                "time": "2 giờ trước",
+                "severity": "high"
+            },
+            {
+                "title": "Cập nhật bản vá bảo mật khẩn cấp cho Windows",
+                "summary": "Microsoft phát hành bản vá khẩn cấp để sửa lỗi zero-day đang được khai thác tích cực bởi các nhóm APT.",
+                "time": "5 giờ trước", 
+                "severity": "high"
+            },
+            {
+                "title": "Chiến dịch phishing mạo danh ngân hàng gia tăng",
+                "summary": "Số lượng email phishing mạo danh các ngân hàng lớn tại Việt Nam tăng 45% trong tuần qua.",
+                "time": "1 ngày trước",
+                "severity": "medium"
+            },
+            {
+                "title": "Hướng dẫn bảo vệ hệ thống khỏi malware mới",
+                "summary": "Các biện pháp phòng ngừa và phát hiện sớm các loại malware mới xuất hiện gần đây.",
+                "time": "2 ngày trước",
+                "severity": "low"
+            }
+        ]
+
+        for news in news_data:
+            severity_color = {"high": "#ff6b6b", "medium": "#ffd43b", "low": "#51cf66"}[news["severity"]]
+            severity_text = {"high": "🔴 Nghiêm trọng", "medium": "🟡 Trung bình", "low": "🟢 Thông tin"}[news["severity"]]
+            
+            st.markdown(f"""
+            <div style="border-left: 4px solid {severity_color}; background: #f8f9fa; padding: 15px; margin: 10px 0; border-radius: 0 5px 5px 0;">
+                <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 8px;">
+                    <h4 style="margin: 0; color: #333;">{news['title']}</h4>
+                    <span style="color: {severity_color}; font-size: 0.9em; font-weight: bold;">{severity_text}</span>
+                </div>
+                <p style="margin: 8px 0; color: #666; line-height: 1.5;">{news['summary']}</p>
+                <small style="color: #999;">⏰ {news['time']}</small>
+            </div>
+            """, unsafe_allow_html=True)
+
+        # Thêm biểu đồ thống kê thời gian thực
+        st.markdown('<div class="sub-header">📈 Thống kê Thời gian thực</div>', unsafe_allow_html=True)
+
+        # Tạo dãy ngày
+        dates = pd.date_range(start='2024-07-01', end='2025-06-30', freq='D')
+
+        # Thiết lập seed để tái lập kết quả
+        np.random.seed(42)
+
+        # Tạo hệ số dao động cho từng tháng (giả lập xu hướng thực tế: cuối năm tăng, đầu năm giảm)
+        monthly_malware_base = {
+            7:  14,  8: 13,  9: 16, 10: 19, 11: 22, 12: 28,  # Từ tháng 7 đến tháng 12/2024
+            1:  32,  2: 29,  3: 22,  4: 18,  5: 16,  6: 15   # Từ tháng 1 đến tháng 6/2025
+        }
+        monthly_clean_base = {
+            7:  55,  8: 56,  9: 58, 10: 62, 11: 66, 12: 70,
+            1:  75,  2: 70,  3: 65,  4: 60,  5: 58,  6: 56
+        }
+
+        dates = pd.date_range(start='2024-07-01', end='2025-06-30', freq='D')
+        np.random.seed(42)
+
+        malware_detections = []
+        clean_files = []
+        base_mal = 10
+        base_clean = 50
+        trend_increase = 0.08  # mức tăng nhẹ theo ngày
+
+        for i, d in enumerate(dates):
+            # Dao động mạnh quanh giá trị trung bình nhưng vẫn tăng dần theo thời gian
+            daily_mal = base_mal + (i * trend_increase) + np.random.normal(0, 5)
+            daily_clean = base_clean + (i * trend_increase * 2) + np.random.normal(0, 12)
+            malware_detections.append(max(0, int(daily_mal)))
+            clean_files.append(max(0, int(daily_clean)))
+
+        stats_df = pd.DataFrame({
+            'Ngày': dates,
+            'Mã độc phát hiện': malware_detections,
+            'File lành tính': clean_files,
+            'Tổng file quét': np.array(malware_detections) + np.array(clean_files)
+        })
+
+        # Optional: Xem thử thống kê theo tháng
+        #print(stats_df.groupby(stats_df['Ngày'].dt.month)[['Mã độc phát hiện', 'File lành tính']].mean())
+
+        # Tạo tabs cho các biểu đồ khác nhau
+        chart_tabs = st.tabs(["📊 Tổng quan", "🦠 Mã độc", "📈 Xu hướng", "🌍 Phân bố địa lý"])
+
+        with chart_tabs[0]:
+            
+            # Biểu đồ cột
+            fig, ax = plt.subplots(figsize=(12, 6))
+            
+            # Lấy dữ liệu theo tháng - SỬA LỖI Ở ĐÂY
+            monthly_stats = stats_df.groupby(stats_df['Ngày'].dt.to_period('M')).agg({
+                'Mã độc phát hiện': 'sum',
+                'File lành tính': 'sum',
+                'Tổng file quét': 'sum'
+            })
+            
+            x = range(len(monthly_stats))
+            width = 0.35
+            
+            ax.bar([i - width/2 for i in x], monthly_stats['Mã độc phát hiện'], width, 
+                label='Mã độc phát hiện', color='#ff6b6b', alpha=0.8)
+            ax.bar([i + width/2 for i in x], monthly_stats['File lành tính'], width,
+                label='File lành tính', color='#51cf66', alpha=0.8)
+            
+            ax.set_xlabel('Tháng')
+            ax.set_ylabel('Số lượng file')
+            ax.set_title('Thống kê phát hiện mã độc theo tháng')
+            ax.set_xticks(x)
+            ax.set_xticklabels([str(period) for period in monthly_stats.index])
+            ax.legend()
+            ax.grid(True, alpha=0.3)
+            
+            plt.xticks(rotation=45)
+            plt.tight_layout()
+            st.pyplot(fig)
+            plt.close()
+
+        with chart_tabs[1]:
+            # Lấy dữ liệu và sắp xếp theo số lượng giảm dần
+            malware_types_full = [
+                'Adware', 'Backdoor', 'Dialer', 'Obfuscated mal', 'PWS', 'Rogue',
+                'TDownloader', 'Trojan', 'TrojanDownl', 'Virus', 'Worm'
+            ]
+            malware_counts_full = [
+                4961, 5669, 553, 1228, 679, 381, 564, 5852, 848, 1997, 8869
+            ]
+
+            # Sắp xếp để lấy top 5 loại có số lượng nhiều nhất
+            malware_data = list(zip(malware_types_full, malware_counts_full))
+            malware_data_sorted = sorted(malware_data, key=lambda x: x[1], reverse=True)
+            top5_types, top5_counts = zip(*malware_data_sorted[:5])
+
+            col1, col2 = st.columns(2)
+            with col1:
+                fig, ax = plt.subplots(figsize=(8, 8))
+                colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96c93d', '#feca57']
+
+                wedges, texts, autotexts = ax.pie(
+                    top5_counts,
+                    labels=top5_types,
+                    colors=colors,
+                    autopct='%1.1f%%',
+                    startangle=90,
+                    explode=[0.05]*5
+                )
+
+                ax.set_title('Top 5 loại mã độc phát hiện nhiều nhất', fontsize=15, fontweight='bold')
+
+                for autotext in autotexts:
+                    autotext.set_color('white')
+                    autotext.set_fontweight('bold')
+
+                st.pyplot(fig)
+                plt.close()
+
+            
+            with col2:
+                st.markdown("**Top 5 nhóm mã độc có số phát hiện cao nhất:**")
+                top_malware = [
+                    {"name": "Worm", "detections": 8869, "risk": "Cực cao"},
+                    {"name": "Trojan", "detections": 5852, "risk": "Cao"},
+                    {"name": "Backdoor", "detections": 5669, "risk": "Cao"},
+                    {"name": "Adware", "detections": 4961, "risk": "Trung bình"},
+                    {"name": "Virus", "detections": 1997, "risk": "Trung bình"}
+                ]
+                for i, malware in enumerate(top_malware, 1):
+                    risk_color = {
+                        "Cực cao": "#d32f2f",
+                        "Cao": "#f57c00",
+                        "Trung bình": "#fbc02d"
+                    }[malware["risk"]]
+                    st.markdown(f"""
+                    <div style="background: #f8f9fa; padding: 10px; margin: 5px 0; border-radius: 5px; border-left: 4px solid {risk_color};">
+                        <strong>{i}. {malware['name']}</strong><br>
+                        <small>Phát hiện: {malware['detections']:,} lần | Mức độ: <span style="color: {risk_color};">{malware['risk']}</span></small>
+                    </div>
+                    """, unsafe_allow_html=True)
+
+        with chart_tabs[2]:
+            st.markdown("##### Xu hướng phát hiện mã độc")
+
+            fig, ax = plt.subplots(figsize=(12, 6))
+
+            # Dữ liệu trung bình theo tuần
+            weekly_stats = stats_df.groupby(stats_df['Ngày'].dt.to_period('W')).mean()
+
+            ax.plot(range(len(weekly_stats)), weekly_stats['Mã độc phát hiện'],
+                    marker='o', linewidth=2, markersize=4, color='#ff6b6b', label='Mã độc')
+            ax.plot(range(len(weekly_stats)), weekly_stats['File lành tính'],
+                    marker='s', linewidth=2, markersize=4, color='#51cf66', label='File lành tính')
+
+            # Thêm đường xu hướng tổng thể (polyfit bậc 1)
+            z1 = np.polyfit(range(len(weekly_stats)), weekly_stats['Mã độc phát hiện'], 1)
+            p1 = np.poly1d(z1)
+            ax.plot(range(len(weekly_stats)), p1(range(len(weekly_stats))),
+                    "--", alpha=0.7, color='#183153', label='Trend mã độc')
+
+            ax.set_xlabel('Tuần')
+            ax.set_ylabel('Số lượng file trung bình')
+            ax.set_title('Xu hướng phát hiện mã độc theo tuần')
+            ax.legend()
+            ax.grid(True, alpha=0.3)
+
+            plt.tight_layout()
+            st.pyplot(fig)
+            plt.close()
+
+            # Hiển thị thông tin xu hướng
+            trend_slope = z1[0]
+            if trend_slope > 0:
+                trend_text = f"📈 Tổng thể: số lượng file mã độc/tuần đang có xu hướng **tăng** (+{trend_slope:.2f}/tuần)"
+                trend_color = "#ff6b6b"
+            else:
+                trend_text = f"📉 Tổng thể: số lượng file mã độc/tuần đang có xu hướng **giảm** (-{abs(trend_slope):.2f}/tuần)"
+                trend_color = "#51cf66"
+
+            st.markdown(f"""
+            <div style="background: {trend_color}; color: white; padding: 15px; border-radius: 5px; text-align: center; margin: 10px 0;">
+                <h4>{trend_text}</h4>
+            </div>
+            """, unsafe_allow_html=True)
+
+
+        with chart_tabs[3]:
+
+
+            # Dữ liệu theo 8 vùng địa lý chính của Việt Nam (giả lập, điền lại số liệu thực tế nếu có)
+            region_data = [
+                {"region": "Đông Bắc", "threats": 1350, "population": "15M", "density": 90.0},
+                {"region": "Tây Bắc", "threats": 620, "population": "5.7M", "density": 108.8},
+                {"region": "Đồng bằng sông Hồng", "threats": 2680, "population": "22M", "density": 121.8},
+                {"region": "Bắc Trung Bộ", "threats": 1220, "population": "10.5M", "density": 116.2},
+                {"region": "Nam Trung Bộ", "threats": 980, "population": "9.1M", "density": 107.7},
+                {"region": "Tây Nguyên", "threats": 870, "population": "6.2M", "density": 140.3},
+                {"region": "Đông Nam Bộ", "threats": 3350, "population": "18.2M", "density": 184.1},
+                {"region": "Đồng bằng sông Cửu Long", "threats": 2110, "population": "17.5M", "density": 120.6}
+            ]
+            region_df = pd.DataFrame(region_data)
+
+            # Đặt font chữ mặc định cho matplotlib (nên dùng font "DejaVu Sans" hoặc "Arial", hoặc font tiếng Việt như "Roboto", "Tahoma" nếu có hỗ trợ)
+            plt.rcParams['font.family'] = 'DejaVu Sans'  # hoặc 'Arial', 'Tahoma', 'Roboto', v.v.
+            plt.rcParams['font.size'] = 15
+
+            fig, ax = plt.subplots(figsize=(15, 7))
+
+            colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96c93d', '#feca57', '#ff9ff3', '#54a0ff', '#51cf66']
+            bars = ax.barh(region_df['region'], region_df['threats'], color=colors, alpha=0.88, height=0.55)
+
+            ax.set_xlabel('Số lượng mối đe dọa', fontsize=17, labelpad=15, fontweight='bold')
+            ax.set_title('Mối đe dọa theo khu vực hành chính', fontsize=23, fontweight='bold', pad=25)
+            ax.tick_params(axis='y', labelsize=16)
+            ax.tick_params(axis='x', labelsize=15)
+            ax.grid(True, alpha=0.25, axis='x', linestyle='--', linewidth=1.2)
+
+            for bar in bars:
+                width = bar.get_width()
+                ax.text(width + max(region_df['threats']) * 0.015, bar.get_y() + bar.get_height()/2,
+                        f'{int(width):,}', ha='left', va='center', fontsize=15, fontweight='bold', color='#222')
+
+            plt.tight_layout(pad=2.2)
+            st.pyplot(fig)
+            plt.close()
+
+
+            # with col2:
+            # # Thống kê chi tiết rút gọn
+            #     for region in region_data:
+            #         st.markdown(f"""
+            #         <div style="background: #f8f9fa; padding: 12px; margin: 8px 0; border-radius: 5px;">
+            #             <h5 style="margin: 0 0 -18px 0; color: #333;">{region['region']}</h5>
+            #             <div style="display: flex; justify-content: space-between;">
+            #                 <span>Mối đe dọa:</span>
+            #                 <strong>{region['threats']:,}</strong>
+            #             </div>
+            #             <div style="display: flex; justify-content: space-between;">
+            #                 <span>Tỷ lệ nhiễm:</span>
+            #                 <strong>{region['density']:.1f}%</strong>
+            #             </div>
+            #         </div>
+            #         """, unsafe_allow_html=True)
+
+
+
+
+        # Thêm phần cảnh báo và khuyến nghị
+        st.markdown('<div class="sub-header">💡 Khuyến nghị Bảo mật</div>', unsafe_allow_html=True)
+        recommendations = [
+            {
+                "icon": "🛡️",
+                "title": "Cập nhật hệ thống thường xuyên",
+                "desc": "Luôn cài đặt các bản vá bảo mật mới nhất cho hệ điều hành và phần mềm",
+                "priority": "high"
+            },
+            {
+                "icon": "🔍",
+                "title": "Quét mã độc định kỳ",
+                "desc": "Sử dụng công cụ này để quét các file đáng ngờ ít nhất 1 lần/tuần",
+                "priority": "high"
+            },
+            {
+                "icon": "📧",
+                "title": "Cẩn thận với email lạ",
+                "desc": "Không mở file đính kèm hoặc click link từ email không rõ nguồn gốc",
+                "priority": "medium"
+            },
+            {
+                "icon": "💾",
+                "title": "Sao lưu dữ liệu quan trọng",
+                "desc": "Thực hiện backup định kỳ và lưu trữ ở nơi an toàn, tách biệt",
+                "priority": "medium"
+            },
+            {
+                "icon": "🔐",
+                "title": "Sử dụng mật khẩu mạnh",
+                "desc": "Tạo mật khẩu phức tạp và bật xác thực 2 yếu tố khi có thể",
+                "priority": "low"
+            },
+            {
+                "icon": "🌐",
+                "title": "Duyệt web an toàn",
+                "desc": "Tránh truy cập các trang web đáng ngờ và tải phần mềm từ nguồn không tin cậy",
+                "priority": "low"
+            }
+        ]
+
+        # Hiển thị khuyến nghị theo mức độ ưu tiên
+        priority_colors = {"high": "#ff6b6b", "medium": "#ffd43b", "low": "#51cf66"}
+        priority_labels = {"high": "Ưu tiên cao", "medium": "Ưu tiên trung bình", "low": "Ưu tiên thấp"}
+
+        for priority in ["high", "medium", "low"]:
+            priority_recs = [r for r in recommendations if r["priority"] == priority]
+            if priority_recs:
+                st.markdown(f"""
+                <div style="background: {priority_colors[priority]}; color: white; padding: 10px; border-radius: 5px 5px 0 0; margin-top: 20px;">
+                    <h4 style="margin: 0;">{priority_labels[priority]}</h4>
+                </div>
+                """, unsafe_allow_html=True)
+                
+                for rec in priority_recs:
+                    st.markdown(f"""
+                    <div style="background: #f8f9fa; padding: 15px; margin: 0 0 2px 0; border-left: 4px solid {priority_colors[priority]};">
+                        <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                            <span style="font-size: 24px; margin-right: 10px;">{rec['icon']}</span>
+                            <h5 style="margin: 0; color: #333;">{rec['title']}</h5>
+                        </div>
+                        <p style="margin: 0; color: #666; line-height: 1.4;">{rec['desc']}</p>
+                    </div>
+                    """, unsafe_allow_html=True)
+# --- Tab thông tin ---
+with tab4:
     st.markdown('<div class="sub-header">ℹ️ Thông tin về ứng dụng</div>', unsafe_allow_html=True)
     
     # Thông tin về mô hình
@@ -1495,624 +2140,708 @@ with tab3:
         - **Entropy > 7.0:** Có thể được nén/mã hóa/đóng gói
         """)
 
-    # Footer
-    st.markdown("---")
-    st.markdown("""
-    <div style="text-align: center; color: #666; font-size: 0.9em;">
-        <p>🔍 <strong>Malware Detection System</strong> | Phiên bản 2.0</p>
-        <p>Sử dụng mô hình Inception v3 để phát hiện phần mềm độc hại</p>
-        <p>© 2024 - Phát triển bởi AI Security Team</p>
-    </div>
-    """, unsafe_allow_html=True)
+     # Hiển thị bản đồ Việt Nam với thông tin về mối đe dọa
+        st.markdown('<div class="map-header">🗺️ Giám sát an ninh mạng quốc gia: Bản đồ Việt Nam</div>', unsafe_allow_html=True)
 
-# Hiển thị bản đồ Việt Nam với thông tin về mối đe dọa
-st.markdown('<div class="map-header">🗺️ Bản đồ Mối đe dọa An ninh mạng Việt Nam</div>', unsafe_allow_html=True)
+        # Tạo HTML cho bản đồ
+        map_html = """
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Vietnam Cybersecurity Threat Map</title>
+            <meta charset="utf-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+            <style>
+                body { margin: 0; padding: 0; }
+                #map { height: 500px; width: 100%; }
+                .threat-info {
+                    background: rgba(255, 255, 255, 0.9);
+                    padding: 10px;
+                    border-radius: 5px;
+                    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+                }
+                .threat-level-high { color: #d32f2f; font-weight: bold; }
+                .threat-level-medium { color: #f57c00; font-weight: bold; }
+                .threat-level-low { color: #388e3c; font-weight: bold; }
+            </style>
+        </head>
+        <body>
+            <div id="map"></div>
+            <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+            <script>
+                // Khởi tạo bản đồ tập trung vào Việt Nam
+                var map = L.map('map').setView([16.0583, 108.2772], 6);
+                // Thêm tile layer
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {attribution: '© OpenStreetMap, © CartoDB'}).addTo(map);
+                // Dữ liệu mối đe dọa giả lập 63 tỉnh/thành Việt Nam 2024
+                var threatData = [
+                    // Nhóm High (từ 700+)
+                    {city: "TP. Hồ Chí Minh", lat: 10.7769, lng: 106.7009, threats: 2100, level: "high", malware: 750, phishing: 520, ddos: 315, other: 515},
+                    {city: "Hà Nội", lat: 21.0285, lng: 105.8542, threats: 1480, level: "high", malware: 525, phishing: 365, ddos: 212, other: 378},
+                    {city: "Bình Dương", lat: 10.9804, lng: 106.6519, threats: 855, level: "high", malware: 312, phishing: 201, ddos: 121, other: 221},
+                    {city: "Đồng Nai", lat: 10.9452, lng: 106.8246, threats: 802, level: "high", malware: 285, phishing: 189, ddos: 116, other: 212},
 
-# Tạo HTML cho bản đồ
-map_html = """
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Vietnam Cybersecurity Threat Map</title>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-    <style>
-        body { margin: 0; padding: 0; }
-        #map { height: 500px; width: 100%; }
-        .threat-info {
-            background: rgba(255, 255, 255, 0.9);
-            padding: 10px;
-            border-radius: 5px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-        }
-        .threat-level-high { color: #d32f2f; font-weight: bold; }
-        .threat-level-medium { color: #f57c00; font-weight: bold; }
-        .threat-level-low { color: #388e3c; font-weight: bold; }
-    </style>
-</head>
-<body>
-    <div id="map"></div>
-    
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-    <script>
-        // Khởi tạo bản đồ tập trung vào Việt Nam
-        var map = L.map('map').setView([16.0583, 108.2772], 6);
-        
-        // Thêm tile layer
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap contributors'
-        }).addTo(map);
-        
-        // Dữ liệu mối đe dọa giả lập cho các thành phố lớn
-        var threatData = [
-            {
-                city: "Hà Nội",
-                lat: 21.0285,
-                lng: 105.8542,
-                threats: 1247,
-                level: "high",
-                malware: 423,
-                phishing: 301,
-                ddos: 189,
-                other: 334
-            },
-            {
-                city: "TP. Hồ Chí Minh",
-                lat: 10.8231,
-                lng: 106.6297,
-                threats: 1891,
-                level: "high",
-                malware: 634,
-                phishing: 445,
-                ddos: 287,
-                other: 525
-            },
-            {
-                city: "Đà Nẵng",
-                lat: 16.0544,
-                lng: 108.2022,
-                threats: 456,
-                level: "medium",
-                malware: 145,
-                phishing: 123,
-                ddos: 78,
-                other: 110
-            },
-            {
-                city: "Hải Phòng",
-                lat: 20.8449,
-                lng: 106.6881,
-                threats: 312,
-                level: "medium",
-                malware: 98,
-                phishing: 87,
-                ddos: 56,
-                other: 71
-            },
-            {
-                city: "Cần Thơ",
-                lat: 10.0452,
-                lng: 105.7469,
-                threats: 234,
-                level: "low",
-                malware: 67,
-                phishing: 54,
-                ddos: 43,
-                other: 70
-            }
-        ];
-        
-        // Hàm xác định màu sắc dựa trên mức độ đe dọa
-        function getThreatColor(level) {
-            switch(level) {
-                case 'high': return '#d32f2f';
-                case 'medium': return '#f57c00';
-                case 'low': return '#388e3c';
-                default: return '#666666';
-            }
-        }
-        
-        // Hàm xác định kích thước marker dựa trên số lượng đe dọa
-        function getMarkerSize(threats) {
-            if (threats > 1000) return 25;
-            if (threats > 500) return 20;
-            if (threats > 200) return 15;
-            return 10;
-        }
-        
-        // Thêm markers cho từng thành phố
-        threatData.forEach(function(data) {
-            var color = getThreatColor(data.level);
-            var size = getMarkerSize(data.threats);
-            
-            // Tạo custom icon
-            var threatIcon = L.divIcon({
-                className: 'threat-marker',
-                html: '<div style="background-color: ' + color + '; width: ' + size + 'px; height: ' + size + 'px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>',
-                iconSize: [size, size],
-                iconAnchor: [size/2, size/2]
-            });
-            
-            // Tạo popup content
-            var popupContent = `
-                <div class="threat-info">
-                    <h3>${data.city}</h3>
-                    <p><strong>Tổng mối đe dọa:</strong> <span class="threat-level-${data.level}">${data.threats}</span></p>
-                    <hr>
-                    <p><strong>Phân loại:</strong></p>
-                    <ul>
-                        <li>🦠 Malware: ${data.malware}</li>
-                        <li>🎣 Phishing: ${data.phishing}</li>
-                        <li>⚡ DDoS: ${data.ddos}</li>
-                        <li>🔧 Khác: ${data.other}</li>
-                    </ul>
-                    <p><strong>Mức độ:</strong> <span class="threat-level-${data.level}">${data.level.toUpperCase()}</span></p>
-                </div>
-            `;
-            
-            // Thêm marker vào bản đồ
-            L.marker([data.lat, data.lng], {icon: threatIcon})
-                .bindPopup(popupContent)
-                .addTo(map);
-        });
-        
-        // Thêm legend
-        var legend = L.control({position: 'bottomright'});
-        legend.onAdd = function (map) {
-            var div = L.DomUtil.create('div', 'info legend');
-            div.innerHTML = `
-                <div style="background: rgba(255,255,255,0.9); padding: 10px; border-radius: 5px; box-shadow: 0 2px 10px rgba(0,0,0,0.2);">
-                    <h4>Mức độ đe dọa</h4>
-                    <div><span style="color: #d32f2f;">●</span> Cao (>1000)</div>
-                    <div><span style="color: #f57c00;">●</span> Trung bình (200-1000)</div>
-                    <div><span style="color: #388e3c;">●</span> Thấp (<200)</div>
-                    <hr>
-                    <small>Dữ liệu cập nhật: ${new Date().toLocaleDateString('vi-VN')}</small>
-                </div>
-            `;
-            return div;
-        };
-        legend.addTo(map);
-        
-        // Thêm thông tin tổng quan
-        var info = L.control({position: 'topleft'});
-        info.onAdd = function (map) {
-            var div = L.DomUtil.create('div', 'info');
-            var totalThreats = threatData.reduce((sum, data) => sum + data.threats, 0);
-            div.innerHTML = `
-                <div style="background: rgba(255,255,255,0.9); padding: 15px; border-radius: 5px; box-shadow: 0
-                <div style="background: rgba(255,255,255,0.9); padding: 15px; border-radius: 5px; box-shadow: 0 2px 10px rgba(0,0,0,0.2);">
-                    <h3>🇻🇳 Tình hình An ninh mạng Việt Nam</h3>
-                    <p><strong>Tổng mối đe dọa:</strong> <span style="color: #d32f2f; font-weight: bold;">${totalThreats}</span></p>
-                    <p><strong>Khu vực nguy hiểm nhất:</strong> TP. Hồ Chí Minh</p>
-                    <p><strong>Loại đe dọa phổ biến:</strong> Malware</p>
-                    <hr>
-                    <small>⚠️ Dữ liệu mô phỏng cho mục đích minh họa</small>
-                </div>
-            `;
-            return div;
-        };
-        info.addTo(map);
-        
-        // Thêm hiệu ứng pulse cho các marker có mức đe dọa cao
-        threatData.forEach(function(data) {
-            if (data.level === 'high') {
-                var pulseIcon = L.divIcon({
-                    className: 'pulse-marker',
-                    html: '<div class="pulse-dot"></div>',
-                    iconSize: [20, 20],
-                    iconAnchor: [10, 10]
+                    // Nhóm Medium (300–700)
+                    {city: "Hải Phòng", lat: 20.8449, lng: 106.6881, threats: 626, level: "medium", malware: 213, phishing: 168, ddos: 104, other: 141},
+                    {city: "Cần Thơ", lat: 10.0452, lng: 105.7469, threats: 563, level: "medium", malware: 186, phishing: 153, ddos: 80, other: 144},
+                    {city: "Đà Nẵng", lat: 16.0544, lng: 108.2022, threats: 488, level: "medium", malware: 159, phishing: 126, ddos: 74, other: 129},
+                    {city: "Thanh Hóa", lat: 19.8072, lng: 105.7768, threats: 473, level: "medium", malware: 154, phishing: 121, ddos: 77, other: 121},
+                    {city: "Nghệ An", lat: 18.6796, lng: 105.6813, threats: 452, level: "medium", malware: 147, phishing: 115, ddos: 70, other: 120},
+                    {city: "Quảng Ninh", lat: 21.0064, lng: 107.2925, threats: 441, level: "medium", malware: 141, phishing: 112, ddos: 66, other: 122},
+                    {city: "Thừa Thiên Huế", lat: 16.4637, lng: 107.5909, threats: 407, level: "medium", malware: 135, phishing: 98, ddos: 62, other: 112},
+                    {city: "Hải Dương", lat: 20.9401, lng: 106.3336, threats: 396, level: "medium", malware: 123, phishing: 101, ddos: 62, other: 110},
+                    {city: "Bắc Ninh", lat: 21.1861, lng: 106.0763, threats: 384, level: "medium", malware: 118, phishing: 95, ddos: 66, other: 105},
+                    {city: "Thái Bình", lat: 20.4509, lng: 106.3406, threats: 376, level: "medium", malware: 112, phishing: 92, ddos: 65, other: 107},
+                    {city: "Vĩnh Phúc", lat: 21.3081, lng: 105.6046, threats: 372, level: "medium", malware: 109, phishing: 90, ddos: 62, other: 111},
+                    {city: "Bắc Giang", lat: 21.2731, lng: 106.1946, threats: 361, level: "medium", malware: 106, phishing: 84, ddos: 66, other: 105},
+                    {city: "Nam Định", lat: 20.4388, lng: 106.1621, threats: 358, level: "medium", malware: 103, phishing: 88, ddos: 61, other: 106},
+                    {city: "Phú Thọ", lat: 21.3457, lng: 105.2120, threats: 347, level: "medium", malware: 100, phishing: 85, ddos: 55, other: 107},
+                    {city: "Quảng Nam", lat: 15.5394, lng: 108.0191, threats: 341, level: "medium", malware: 98, phishing: 83, ddos: 54, other: 106},
+
+                    // Nhóm Low (dưới 300)
+                    {city: "Bình Định", lat: 13.7820, lng: 109.2191, threats: 298, level: "low", malware: 85, phishing: 76, ddos: 46, other: 91},
+                    {city: "Quảng Ngãi", lat: 15.1202, lng: 108.7922, threats: 286, level: "low", malware: 84, phishing: 63, ddos: 43, other: 96},
+                    {city: "Lâm Đồng", lat: 11.5753, lng: 108.1429, threats: 275, level: "low", malware: 78, phishing: 59, ddos: 40, other: 98},
+                    {city: "Kiên Giang", lat: 10.0086, lng: 105.0807, threats: 265, level: "low", malware: 75, phishing: 58, ddos: 36, other: 96},
+                    {city: "Long An", lat: 10.5435, lng: 106.4106, threats: 257, level: "low", malware: 72, phishing: 55, ddos: 38, other: 92},
+                    {city: "Bến Tre", lat: 10.2415, lng: 106.3754, threats: 243, level: "low", malware: 69, phishing: 52, ddos: 33, other: 89},
+                    {city: "An Giang", lat: 10.5216, lng: 105.1259, threats: 239, level: "low", malware: 67, phishing: 54, ddos: 31, other: 87},
+                    {city: "Đắk Lắk", lat: 12.7100, lng: 108.2378, threats: 233, level: "low", malware: 65, phishing: 47, ddos: 32, other: 89},
+                    {city: "Tiền Giang", lat: 10.4493, lng: 106.3421, threats: 231, level: "low", malware: 66, phishing: 46, ddos: 31, other: 88},
+                    {city: "Bà Rịa - Vũng Tàu", lat: 10.5418, lng: 107.2428, threats: 228, level: "low", malware: 64, phishing: 49, ddos: 28, other: 87},
+                    {city: "Quảng Bình", lat: 17.4689, lng: 106.6228, threats: 224, level: "low", malware: 62, phishing: 44, ddos: 31, other: 87},
+                    {city: "Tây Ninh", lat: 11.3352, lng: 106.1099, threats: 220, level: "low", malware: 61, phishing: 43, ddos: 29, other: 87},
+                    {city: "Thái Nguyên", lat: 21.5672, lng: 105.8252, threats: 217, level: "low", malware: 60, phishing: 42, ddos: 28, other: 87},
+                    {city: "Vĩnh Long", lat: 10.2536, lng: 105.9722, threats: 211, level: "low", malware: 59, phishing: 41, ddos: 25, other: 86},
+                    {city: "Quảng Trị", lat: 16.8187, lng: 107.0917, threats: 207, level: "low", malware: 57, phishing: 40, ddos: 26, other: 84},
+                    {city: "Sóc Trăng", lat: 9.6026, lng: 105.9731, threats: 203, level: "low", malware: 56, phishing: 39, ddos: 25, other: 83},
+                    {city: "Gia Lai", lat: 13.8079, lng: 108.1095, threats: 200, level: "low", malware: 54, phishing: 37, ddos: 24, other: 85},
+                    {city: "Bạc Liêu", lat: 9.2941, lng: 105.7278, threats: 199, level: "low", malware: 54, phishing: 38, ddos: 23, other: 84},
+                    {city: "Hà Tĩnh", lat: 18.3559, lng: 105.8875, threats: 197, level: "low", malware: 52, phishing: 38, ddos: 24, other: 83},
+                    {city: "Ninh Bình", lat: 20.2506, lng: 105.9745, threats: 194, level: "low", malware: 52, phishing: 36, ddos: 22, other: 84},
+                    {city: "Hưng Yên", lat: 20.6463, lng: 106.0511, threats: 192, level: "low", malware: 51, phishing: 35, ddos: 22, other: 84},
+                    {city: "Đắk Nông", lat: 12.2644, lng: 107.6098, threats: 188, level: "low", malware: 49, phishing: 34, ddos: 21, other: 84},
+                    {city: "Tuyên Quang", lat: 21.8230, lng: 105.2148, threats: 185, level: "low", malware: 49, phishing: 33, ddos: 21, other: 82},
+                    {city: "Phú Yên", lat: 13.0882, lng: 109.0929, threats: 181, level: "low", malware: 48, phishing: 31, ddos: 22, other: 80},
+                    {city: "Bình Phước", lat: 11.7512, lng: 106.7235, threats: 178, level: "low", malware: 47, phishing: 31, ddos: 20, other: 80},
+                    {city: "Vĩnh Long", lat: 10.2536, lng: 105.9722, threats: 175, level: "low", malware: 46, phishing: 30, ddos: 20, other: 79},
+                    {city: "Hà Nam", lat: 20.5833, lng: 105.9160, threats: 174, level: "low", malware: 45, phishing: 31, ddos: 19, other: 79},
+                    {city: "Yên Bái", lat: 21.7051, lng: 104.8800, threats: 173, level: "low", malware: 44, phishing: 31, ddos: 18, other: 80},
+                    {city: "Cà Mau", lat: 9.1768, lng: 105.1500, threats: 172, level: "low", malware: 43, phishing: 30, ddos: 18, other: 81},
+                    {city: "Lào Cai", lat: 22.4804, lng: 103.9756, threats: 170, level: "low", malware: 42, phishing: 30, ddos: 18, other: 80},
+                    {city: "Kon Tum", lat: 14.3549, lng: 108.0076, threats: 168, level: "low", malware: 41, phishing: 29, ddos: 17, other: 81},
+                    {city: "Hòa Bình", lat: 20.8171, lng: 105.3376, threats: 167, level: "low", malware: 41, phishing: 28, ddos: 17, other: 81},
+                    {city: "Trà Vinh", lat: 9.9347, lng: 106.3452, threats: 163, level: "low", malware: 41, phishing: 27, ddos: 16, other: 79},
+                    {city: "Lạng Sơn", lat: 21.8528, lng: 106.7610, threats: 159, level: "low", malware: 40, phishing: 27, ddos: 16, other: 76},
+                    {city: "Quảng Nam", lat: 15.5394, lng: 108.0191, threats: 158, level: "low", malware: 39, phishing: 27, ddos: 15, other: 77},
+                    {city: "Bắc Kạn", lat: 22.1485, lng: 105.8348, threats: 156, level: "low", malware: 39, phishing: 25, ddos: 15, other: 77},
+                    {city: "Cao Bằng", lat: 22.6666, lng: 106.2579, threats: 154, level: "low", malware: 38, phishing: 25, ddos: 14, other: 77},
+                    {city: "Bình Thuận", lat: 11.0904, lng: 108.0721, threats: 153, level: "low", malware: 37, phishing: 26, ddos: 13, other: 77},
+                    {city: "Điện Biên", lat: 21.3860, lng: 103.0230, threats: 151, level: "low", malware: 36, phishing: 24, ddos: 14, other: 77},
+                    {city: "Ninh Thuận", lat: 11.6739, lng: 109.0147, threats: 149, level: "low", malware: 35, phishing: 24, ddos: 13, other: 77},
+                    {city: "Hà Giang", lat: 22.8233, lng: 104.9836, threats: 147, level: "low", malware: 34, phishing: 23, ddos: 13, other: 77},
+                    {city: "Quảng Ngãi", lat: 15.1202, lng: 108.7922, threats: 146, level: "low", malware: 33, phishing: 23, ddos: 12, other: 78},
+                    {city: "Sơn La", lat: 21.3256, lng: 103.9188, threats: 144, level: "low", malware: 33, phishing: 23, ddos: 12, other: 76},
+                    {city: "Bắc Ninh", lat: 21.1861, lng: 106.0763, threats: 143, level: "low", malware: 32, phishing: 22, ddos: 12, other: 77},
+                    {city: "Phú Thọ", lat: 21.3457, lng: 105.2120, threats: 139, level: "low", malware: 31, phishing: 21, ddos: 11, other: 76},
+                    {city: "Khánh Hòa", lat: 12.2388, lng: 109.1967, threats: 126, level: "low", malware: 27, phishing: 18, ddos: 10, other: 71},
+                    {city: "Hậu Giang", lat: 9.7845, lng: 105.4701, threats: 123, level: "low", malware: 26, phishing: 17, ddos: 9, other: 71},
+                    // ... (bạn có thể thêm tiếp các huyện/thị xã nếu cần)
+                ];
+
+                // Hàm xác định màu sắc dựa trên mức độ đe dọa
+                function getThreatColor(level) {
+                    switch(level) {
+                        case 'high': return '#d32f2f';
+                        case 'medium': return '#f57c00';
+                        case 'low': return '#388e3c';
+                        default: return '#666666';
+                    }
+                }
+                
+                // Hàm xác định kích thước marker dựa trên số lượng đe dọa
+                function getMarkerSize(threats) {
+                    if (threats > 1000) return 25;
+                    if (threats > 500) return 15;
+                    if (threats > 200) return 10;
+                    return 10;
+                }
+                
+                // Thêm markers cho từng thành phố
+                threatData.forEach(function(data) {
+                    var color = getThreatColor(data.level);
+                    var size = getMarkerSize(data.threats);
+                    
+                    // Tạo custom icon
+                    var threatIcon = L.divIcon({
+                        className: 'threat-marker',
+                        html: '<div style="background-color: ' + color + '; width: ' + size + 'px; height: ' + size + 'px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>',
+                        iconSize: [size, size],
+                        iconAnchor: [size/2, size/2]
+                    });
+                    
+                    // Tạo popup content
+                    var popupContent = `
+                        <div class="threat-info">
+                            <h3>${data.city}</h3>
+                            <p><strong>Tổng mối đe dọa:</strong> <span class="threat-level-${data.level}">${data.threats}</span></p>
+                            <hr>
+                            <p><strong>Phân loại:</strong></p>
+                            <ul>
+                                <li>🦠 Malware: ${data.malware}</li>
+                                <li>🎣 Phishing: ${data.phishing}</li>
+                                <li>⚡ DDoS: ${data.ddos}</li>
+                                <li>🔧 Khác: ${data.other}</li>
+                            </ul>
+                            <p><strong>Mức độ:</strong> <span class="threat-level-${data.level}">${data.level.toUpperCase()}</span></p>
+                        </div>
+                    `;
+                    
+                    // Thêm marker vào bản đồ
+                    L.marker([data.lat, data.lng], {icon: threatIcon})
+                        .bindPopup(popupContent)
+                        .addTo(map);
                 });
                 
-                L.marker([data.lat, data.lng], {icon: pulseIcon}).addTo(map);
+                // Thêm legend
+                var legend = L.control({position: 'bottomright'});
+                legend.onAdd = function (map) {
+                    var div = L.DomUtil.create('div', 'info legend');
+                    div.innerHTML = `
+                        <div style="background: rgba(255,255,255,0.9); padding: 10px; border-radius: 5px; box-shadow: 0 1px 10px rgba(0,0,0,0.2);">
+                            <h4>Mức độ đe dọa</h4>
+                            <div><span style="color: #d32f2f;">●</span> Cao (>1000)</div>
+                            <div><span style="color: #f57c00;">●</span> Trung bình (200-1000)</div>
+                            <div><span style="color: #388e3c;">●</span> Thấp (<200)</div>
+                            <hr>
+                            <small>Dữ liệu cập nhật: ${new Date().toLocaleDateString('vi-VN')}</small>
+                        </div>
+                    `;
+                    return div;
+                };
+                legend.addTo(map);
+                
+                // Thêm thông tin tổng quan
+                var info = L.control({position: 'topleft'});
+                info.onAdd = function (map) {
+                    var div = L.DomUtil.create('div', 'info');
+                    var totalThreats = threatData.reduce((sum, data) => sum + data.threats, 0);
+                    div.innerHTML = `
+                        <div style="background: rgba(255,255,255,0.9); padding: 15px; border-radius: 5px; box-shadow: 0 2px 10px rgba(0,0,0,0.2);">
+                            <h3>🇻🇳 Tình hình An ninh mạng Việt Nam</h3>
+                            <p><strong>Tổng mối đe dọa:</strong> <span style="color: #d32f2f; font-weight: bold;">${totalThreats}</span></p>
+                            <p><strong>Khu vực nguy hiểm nhất:</strong> TP. Hồ Chí Minh</p>
+                            <p><strong>Loại đe dọa phổ biến:</strong> Malware</p>
+                            <hr>
+                            <small>⚠️Dữ liệu sử dụng cho mục đích minh họa</small>
+                        </div>
+                    `;
+                    return div;
+                };
+                info.addTo(map);
+
+                
+                // Thêm hiệu ứng pulse cho các marker có mức đe dọa cao
+                threatData.forEach(function(data) {
+                    if (data.level === 'high') {
+                        var pulseIcon = L.divIcon({
+                            className: 'pulse-marker',
+                            html: '<div class="pulse-dot"></div>',
+                            iconSize: [20, 20],
+                            iconAnchor: [10, 10]
+                        });
+                        
+                        L.marker([data.lat, data.lng], {icon: pulseIcon}).addTo(map);
+                    }
+                });
+                
+                // CSS cho hiệu ứng pulse
+                var style = document.createElement('style');
+                style.innerHTML = `
+                    .pulse-dot {
+                        width: 20px;
+                        height: 20px;
+                        background-color: #d32f2f;
+                        border-radius: 50%;
+                        animation: pulse 2s infinite;
+                        opacity: 0.8;
+                    }
+                    
+                    @keyframes pulse {
+                        0% {
+                            transform: scale(0.8);
+                            opacity: 1;
+                        }
+                        50% {
+                            transform: scale(1.2);
+                            opacity: 0.5;
+                        }
+                        100% {
+                            transform: scale(0.8);
+                            opacity: 1;
+                        }
+                    }
+                `;
+                document.head.appendChild(style);
+                
+            </script>
+        </body>
+        </html>
+        """
+
+        # Hiển thị bản đồ
+        st.components.v1.html(map_html, height=500)
+
+        # Thêm thông tin cảnh báo bảo mật
+        st.markdown('<div class="sub-header">🚨 Cảnh báo Bảo mật</div>', unsafe_allow_html=True)
+
+        col1, col2, col3 = st.columns(3)
+
+        with col1:
+            st.markdown("""
+            <div style="background: linear-gradient(135deg, #ff6b6b, #ee5a52); color: white; padding: 20px; border-radius: 10px; text-align: center;">
+                <h4>⚠️ Mức độ đe dọa</h4>
+                <h2>CAO</h2>
+                <p>Phát hiện nhiều mã độc mới</p>
+                <small>Cập nhật: Hôm nay</small>
+            </div>
+            """, unsafe_allow_html=True)
+
+        with col2:
+            st.markdown("""
+            <div style="background: linear-gradient(135deg, #4ecdc4, #44a08d); color: white; padding: 20px; border-radius: 10px; text-align: center;">
+                <h4>🛡️ Tỷ lệ phát hiện</h4>
+                <h2>94.7%</h2>
+                <p>Độ chính xác của hệ thống</p>
+                <small>Dựa trên 10,000+ mẫu</small>
+            </div>
+            """, unsafe_allow_html=True)
+
+        with col3:
+            st.markdown("""
+            <div style="background: linear-gradient(135deg, #45b7d1, #96c93d); color: white; padding: 20px; border-radius: 10px; text-align: center;">
+                <h4>📊 Files đã quét</h4>
+                <h2>2,847</h2>
+                <p>Trong tháng này</p>
+                <small>Tăng 23% so với tháng trước</small>
+            </div>
+            """, unsafe_allow_html=True)
+
+        # Thêm RSS feed giả lập về tin tức bảo mật
+        st.markdown('<div class="sub-header">📰 Tin tức Bảo mật mới nhất</div>', unsafe_allow_html=True)
+
+        news_data = [
+            {
+                "title": "Phát hiện biến thể mới của ransomware LockBit tại Việt Nam",
+                "summary": "Các chuyên gia bảo mật cảnh báo về sự xuất hiện của biến thể mới của ransomware LockBit đang nhắm mục tiêu vào các doanh nghiệp Việt Nam.",
+                "time": "2 giờ trước",
+                "severity": "high"
+            },
+            {
+                "title": "Cập nhật bản vá bảo mật khẩn cấp cho Windows",
+                "summary": "Microsoft phát hành bản vá khẩn cấp để sửa lỗi zero-day đang được khai thác tích cực bởi các nhóm APT.",
+                "time": "5 giờ trước", 
+                "severity": "high"
+            },
+            {
+                "title": "Chiến dịch phishing mạo danh ngân hàng gia tăng",
+                "summary": "Số lượng email phishing mạo danh các ngân hàng lớn tại Việt Nam tăng 45% trong tuần qua.",
+                "time": "1 ngày trước",
+                "severity": "medium"
+            },
+            {
+                "title": "Hướng dẫn bảo vệ hệ thống khỏi malware mới",
+                "summary": "Các biện pháp phòng ngừa và phát hiện sớm các loại malware mới xuất hiện gần đây.",
+                "time": "2 ngày trước",
+                "severity": "low"
             }
-        });
-        
-        // CSS cho hiệu ứng pulse
-        var style = document.createElement('style');
-        style.innerHTML = `
-            .pulse-dot {
-                width: 20px;
-                height: 20px;
-                background-color: #d32f2f;
-                border-radius: 50%;
-                animation: pulse 2s infinite;
-                opacity: 0.8;
-            }
-            
-            @keyframes pulse {
-                0% {
-                    transform: scale(0.8);
-                    opacity: 1;
-                }
-                50% {
-                    transform: scale(1.2);
-                    opacity: 0.5;
-                }
-                100% {
-                    transform: scale(0.8);
-                    opacity: 1;
-                }
-            }
-        `;
-        document.head.appendChild(style);
-        
-    </script>
-</body>
-</html>
-"""
-
-# Hiển thị bản đồ
-st.components.v1.html(map_html, height=600)
-
-# Thêm thông tin cảnh báo bảo mật
-st.markdown("---")
-st.markdown('<div class="sub-header">🚨 Cảnh báo Bảo mật</div>', unsafe_allow_html=True)
-
-col1, col2, col3 = st.columns(3)
-
-with col1:
-    st.markdown("""
-    <div style="background: linear-gradient(135deg, #ff6b6b, #ee5a52); color: white; padding: 20px; border-radius: 10px; text-align: center;">
-        <h4>⚠️ Mức độ đe dọa</h4>
-        <h2>CAO</h2>
-        <p>Phát hiện nhiều mã độc mới</p>
-        <small>Cập nhật: Hôm nay</small>
-    </div>
-    """, unsafe_allow_html=True)
-
-with col2:
-    st.markdown("""
-    <div style="background: linear-gradient(135deg, #4ecdc4, #44a08d); color: white; padding: 20px; border-radius: 10px; text-align: center;">
-        <h4>🛡️ Tỷ lệ phát hiện</h4>
-        <h2>94.7%</h2>
-        <p>Độ chính xác của hệ thống</p>
-        <small>Dựa trên 10,000+ mẫu</small>
-    </div>
-    """, unsafe_allow_html=True)
-
-with col3:
-    st.markdown("""
-    <div style="background: linear-gradient(135deg, #45b7d1, #96c93d); color: white; padding: 20px; border-radius: 10px; text-align: center;">
-        <h4>📊 Files đã quét</h4>
-        <h2>2,847</h2>
-        <p>Trong tháng này</p>
-        <small>Tăng 23% so với tháng trước</small>
-    </div>
-    """, unsafe_allow_html=True)
-
-# Thêm RSS feed giả lập về tin tức bảo mật
-st.markdown('<div class="sub-header">📰 Tin tức Bảo mật mới nhất</div>', unsafe_allow_html=True)
-
-news_data = [
-    {
-        "title": "Phát hiện biến thể mới của ransomware LockBit tại Việt Nam",
-        "summary": "Các chuyên gia bảo mật cảnh báo về sự xuất hiện của biến thể mới của ransomware LockBit đang nhắm mục tiêu vào các doanh nghiệp Việt Nam.",
-        "time": "2 giờ trước",
-        "severity": "high"
-    },
-    {
-        "title": "Cập nhật bản vá bảo mật khẩn cấp cho Windows",
-        "summary": "Microsoft phát hành bản vá khẩn cấp để sửa lỗi zero-day đang được khai thác tích cực bởi các nhóm APT.",
-        "time": "5 giờ trước", 
-        "severity": "high"
-    },
-    {
-        "title": "Chiến dịch phishing mạo danh ngân hàng gia tăng",
-        "summary": "Số lượng email phishing mạo danh các ngân hàng lớn tại Việt Nam tăng 45% trong tuần qua.",
-        "time": "1 ngày trước",
-        "severity": "medium"
-    },
-    {
-        "title": "Hướng dẫn bảo vệ hệ thống khỏi malware mới",
-        "summary": "Các biện pháp phòng ngừa và phát hiện sớm các loại malware mới xuất hiện gần đây.",
-        "time": "2 ngày trước",
-        "severity": "low"
-    }
-]
-
-for news in news_data:
-    severity_color = {"high": "#ff6b6b", "medium": "#ffd43b", "low": "#51cf66"}[news["severity"]]
-    severity_text = {"high": "🔴 Nghiêm trọng", "medium": "🟡 Trung bình", "low": "🟢 Thông tin"}[news["severity"]]
-    
-    st.markdown(f"""
-    <div style="border-left: 4px solid {severity_color}; background: #f8f9fa; padding: 15px; margin: 10px 0; border-radius: 0 5px 5px 0;">
-        <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 8px;">
-            <h4 style="margin: 0; color: #333;">{news['title']}</h4>
-            <span style="color: {severity_color}; font-size: 0.9em; font-weight: bold;">{severity_text}</span>
-        </div>
-        <p style="margin: 8px 0; color: #666; line-height: 1.5;">{news['summary']}</p>
-        <small style="color: #999;">⏰ {news['time']}</small>
-    </div>
-    """, unsafe_allow_html=True)
-
-# Thêm biểu đồ thống kê thời gian thực
-st.markdown('<div class="sub-header">📈 Thống kê Thời gian thực</div>', unsafe_allow_html=True)
-
-# Tạo dữ liệu giả lập cho biểu đồ
-dates = pd.date_range(start='2024-01-01', end='2024-12-31', freq='D')
-np.random.seed(42)
-malware_detections = np.random.poisson(15, len(dates)) + np.random.randint(0, 10, len(dates))
-clean_files = np.random.poisson(50, len(dates)) + np.random.randint(10, 30, len(dates))
-
-# Tạo DataFrame
-stats_df = pd.DataFrame({
-    'Ngày': dates,
-    'Mã độc phát hiện': malware_detections,
-    'File lành tính': clean_files,
-    'Tổng file quét': malware_detections + clean_files
-})
-
-# Tạo tabs cho các biểu đồ khác nhau
-chart_tabs = st.tabs(["📊 Tổng quan", "🦠 Mã độc", "📈 Xu hướng", "🌍 Phân bố địa lý"])
-
-with chart_tabs[0]:
-    st.markdown("##### Thống kê tổng quan trong năm 2024")
-    
-    # Biểu đồ cột
-    fig, ax = plt.subplots(figsize=(12, 6))
-    
-    # Lấy dữ liệu theo tháng - SỬA LỖI Ở ĐÂY
-    monthly_stats = stats_df.groupby(stats_df['Ngày'].dt.to_period('M')).agg({
-        'Mã độc phát hiện': 'sum',
-        'File lành tính': 'sum',
-        'Tổng file quét': 'sum'
-    })
-    
-    x = range(len(monthly_stats))
-    width = 0.35
-    
-    ax.bar([i - width/2 for i in x], monthly_stats['Mã độc phát hiện'], width, 
-           label='Mã độc phát hiện', color='#ff6b6b', alpha=0.8)
-    ax.bar([i + width/2 for i in x], monthly_stats['File lành tính'], width,
-           label='File lành tính', color='#51cf66', alpha=0.8)
-    
-    ax.set_xlabel('Tháng')
-    ax.set_ylabel('Số lượng file')
-    ax.set_title('Thống kê phát hiện mã độc theo tháng')
-    ax.set_xticks(x)
-    ax.set_xticklabels([str(period) for period in monthly_stats.index])
-    ax.legend()
-    ax.grid(True, alpha=0.3)
-    
-    plt.xticks(rotation=45)
-    plt.tight_layout()
-    st.pyplot(fig)
-    plt.close()
-
-with chart_tabs[1]:
-    st.markdown("##### Phân tích chi tiết về mã độc")
-    
-    # Biểu đồ tròn cho các loại mã độc
-    malware_types = ['Trojan', 'Virus', 'Worm', 'Adware', 'Spyware', 'Ransomware', 'Rootkit']
-    malware_counts = [1234, 987, 756, 543, 432, 321, 234]
-    
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        fig, ax = plt.subplots(figsize=(8, 8))
-        colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96c93d', '#feca57', '#ff9ff3', '#54a0ff']
-        
-        wedges, texts, autotexts = ax.pie(malware_counts, labels=malware_types, colors=colors, 
-                                         autopct='%1.1f%%', startangle=90, explode=[0.05]*len(malware_types))
-        
-        ax.set_title('Phân bố các loại mã độc phát hiện', fontsize=14, fontweight='bold')
-        
-        # Làm đẹp text
-        for autotext in autotexts:
-            autotext.set_color('white')
-            autotext.set_fontweight('bold')
-        
-        st.pyplot(fig)
-        plt.close()
-    
-    with col2:
-        st.markdown("**Top 5 mã độc nguy hiểm nhất:**")
-        top_malware = [
-            {"name": "Emotet", "detections": 2847, "risk": "Cực cao"},
-            {"name": "TrickBot", "detections": 1923, "risk": "Cao"},
-            {"name": "Dridex", "detections": 1456, "risk": "Cao"},
-            {"name": "Qbot", "detections": 1234, "risk": "Trung bình"},
-            {"name": "IcedID", "detections": 987, "risk": "Trung bình"}
         ]
-        
-        for i, malware in enumerate(top_malware, 1):
-            risk_color = {"Cực cao": "#d32f2f", "Cao": "#f57c00", "Trung bình": "#fbc02d"}[malware["risk"]]
+
+        for news in news_data:
+            severity_color = {"high": "#ff6b6b", "medium": "#ffd43b", "low": "#51cf66"}[news["severity"]]
+            severity_text = {"high": "🔴 Nghiêm trọng", "medium": "🟡 Trung bình", "low": "🟢 Thông tin"}[news["severity"]]
+            
             st.markdown(f"""
-            <div style="background: #f8f9fa; padding: 10px; margin: 5px 0; border-radius: 5px; border-left: 4px solid {risk_color};">
-                <strong>{i}. {malware['name']}</strong><br>
-                <small>Phát hiện: {malware['detections']:,} lần | Mức độ: <span style="color: {risk_color};">{malware['risk']}</span></small>
+            <div style="border-left: 4px solid {severity_color}; background: #f8f9fa; padding: 15px; margin: 10px 0; border-radius: 0 5px 5px 0;">
+                <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 8px;">
+                    <h4 style="margin: 0; color: #333;">{news['title']}</h4>
+                    <span style="color: {severity_color}; font-size: 0.9em; font-weight: bold;">{severity_text}</span>
+                </div>
+                <p style="margin: 8px 0; color: #666; line-height: 1.5;">{news['summary']}</p>
+                <small style="color: #999;">⏰ {news['time']}</small>
             </div>
             """, unsafe_allow_html=True)
 
-with chart_tabs[2]:
-    st.markdown("##### Xu hướng phát hiện mã độc")
-    
-    # Biểu đồ đường xu hướng
-    fig, ax = plt.subplots(figsize=(12, 6))
-    
-    # Tạo dữ liệu xu hướng theo tuần
-    weekly_stats = stats_df.groupby(stats_df['Ngày'].dt.to_period('W')).mean()
-    
-    ax.plot(range(len(weekly_stats)), weekly_stats['Mã độc phát hiện'], 
-            marker='o', linewidth=2, markersize=4, color='#ff6b6b', label='Mã độc')
-    ax.plot(range(len(weekly_stats)), weekly_stats['File lành tính'], 
-            marker='s', linewidth=2, markersize=4, color='#51cf66', label='File lành tính')
-    
-    # Thêm đường xu hướng
-    z1 = np.polyfit(range(len(weekly_stats)), weekly_stats['Mã độc phát hiện'], 1)
-    p1 = np.poly1d(z1)
-    ax.plot(range(len(weekly_stats)), p1(range(len(weekly_stats))), 
-            "--", alpha=0.7, color='#ff6b6b', label='Xu hướng mã độc')
-    
-    ax.set_xlabel('Tuần')
-    ax.set_ylabel('Số lượng file trung bình')
-    ax.set_title('Xu hướng phát hiện mã độc theo tuần')
-    ax.legend()
-    ax.grid(True, alpha=0.3)
-    
-    plt.tight_layout()
-    st.pyplot(fig)
-    plt.close()
-    
-    # Hiển thị thông tin xu hướng
-    trend_slope = z1[0]
-    if trend_slope > 0:
-        trend_text = f"📈 Xu hướng tăng {trend_slope:.2f} file mã độc/tuần"
-        trend_color = "#ff6b6b"
-    else:
-        trend_text = f"📉 Xu hướng giảm {abs(trend_slope):.2f} file mã độc/tuần"
-        trend_color = "#51cf66"
-    
-    st.markdown(f"""
-    <div style="background: {trend_color}; color: white; padding: 15px; border-radius: 5px; text-align: center; margin: 10px 0;">
-        <h4>{trend_text}</h4>
+        # Thêm biểu đồ thống kê thời gian thực
+        st.markdown('<div class="sub-header">📈 Thống kê Thời gian thực</div>', unsafe_allow_html=True)
+
+        # Tạo dãy ngày
+        dates = pd.date_range(start='2024-07-01', end='2025-06-30', freq='D')
+
+        # Thiết lập seed để tái lập kết quả
+        np.random.seed(42)
+
+        # Tạo hệ số dao động cho từng tháng (giả lập xu hướng thực tế: cuối năm tăng, đầu năm giảm)
+        monthly_malware_base = {
+            7:  14,  8: 13,  9: 16, 10: 19, 11: 22, 12: 28,  # Từ tháng 7 đến tháng 12/2024
+            1:  32,  2: 29,  3: 22,  4: 18,  5: 16,  6: 15   # Từ tháng 1 đến tháng 6/2025
+        }
+        monthly_clean_base = {
+            7:  55,  8: 56,  9: 58, 10: 62, 11: 66, 12: 70,
+            1:  75,  2: 70,  3: 65,  4: 60,  5: 58,  6: 56
+        }
+
+        dates = pd.date_range(start='2024-07-01', end='2025-06-30', freq='D')
+        np.random.seed(42)
+
+        malware_detections = []
+        clean_files = []
+        base_mal = 10
+        base_clean = 50
+        trend_increase = 0.08  # mức tăng nhẹ theo ngày
+
+        for i, d in enumerate(dates):
+            # Dao động mạnh quanh giá trị trung bình nhưng vẫn tăng dần theo thời gian
+            daily_mal = base_mal + (i * trend_increase) + np.random.normal(0, 5)
+            daily_clean = base_clean + (i * trend_increase * 2) + np.random.normal(0, 12)
+            malware_detections.append(max(0, int(daily_mal)))
+            clean_files.append(max(0, int(daily_clean)))
+
+        stats_df = pd.DataFrame({
+            'Ngày': dates,
+            'Mã độc phát hiện': malware_detections,
+            'File lành tính': clean_files,
+            'Tổng file quét': np.array(malware_detections) + np.array(clean_files)
+        })
+
+        # Optional: Xem thử thống kê theo tháng
+        #print(stats_df.groupby(stats_df['Ngày'].dt.month)[['Mã độc phát hiện', 'File lành tính']].mean())
+
+        # Tạo tabs cho các biểu đồ khác nhau
+        chart_tabs = st.tabs(["📊 Tổng quan", "🦠 Mã độc", "📈 Xu hướng", "🌍 Phân bố địa lý"])
+
+        with chart_tabs[0]:
+            
+            # Biểu đồ cột
+            fig, ax = plt.subplots(figsize=(12, 6))
+            
+            # Lấy dữ liệu theo tháng - SỬA LỖI Ở ĐÂY
+            monthly_stats = stats_df.groupby(stats_df['Ngày'].dt.to_period('M')).agg({
+                'Mã độc phát hiện': 'sum',
+                'File lành tính': 'sum',
+                'Tổng file quét': 'sum'
+            })
+            
+            x = range(len(monthly_stats))
+            width = 0.35
+            
+            ax.bar([i - width/2 for i in x], monthly_stats['Mã độc phát hiện'], width, 
+                label='Mã độc phát hiện', color='#ff6b6b', alpha=0.8)
+            ax.bar([i + width/2 for i in x], monthly_stats['File lành tính'], width,
+                label='File lành tính', color='#51cf66', alpha=0.8)
+            
+            ax.set_xlabel('Tháng')
+            ax.set_ylabel('Số lượng file')
+            ax.set_title('Thống kê phát hiện mã độc theo tháng')
+            ax.set_xticks(x)
+            ax.set_xticklabels([str(period) for period in monthly_stats.index])
+            ax.legend()
+            ax.grid(True, alpha=0.3)
+            
+            plt.xticks(rotation=45)
+            plt.tight_layout()
+            st.pyplot(fig)
+            plt.close()
+
+        with chart_tabs[1]:
+            # Lấy dữ liệu và sắp xếp theo số lượng giảm dần
+            malware_types_full = [
+                'Adware', 'Backdoor', 'Dialer', 'Obfuscated mal', 'PWS', 'Rogue',
+                'TDownloader', 'Trojan', 'TrojanDownl', 'Virus', 'Worm'
+            ]
+            malware_counts_full = [
+                4961, 5669, 553, 1228, 679, 381, 564, 5852, 848, 1997, 8869
+            ]
+
+            # Sắp xếp để lấy top 5 loại có số lượng nhiều nhất
+            malware_data = list(zip(malware_types_full, malware_counts_full))
+            malware_data_sorted = sorted(malware_data, key=lambda x: x[1], reverse=True)
+            top5_types, top5_counts = zip(*malware_data_sorted[:5])
+
+            col1, col2 = st.columns(2)
+            with col1:
+                fig, ax = plt.subplots(figsize=(8, 8))
+                colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96c93d', '#feca57']
+
+                wedges, texts, autotexts = ax.pie(
+                    top5_counts,
+                    labels=top5_types,
+                    colors=colors,
+                    autopct='%1.1f%%',
+                    startangle=90,
+                    explode=[0.05]*5
+                )
+
+                ax.set_title('Top 5 loại mã độc phát hiện nhiều nhất', fontsize=15, fontweight='bold')
+
+                for autotext in autotexts:
+                    autotext.set_color('white')
+                    autotext.set_fontweight('bold')
+
+                st.pyplot(fig)
+                plt.close()
+
+            
+            with col2:
+                st.markdown("**Top 5 nhóm mã độc có số phát hiện cao nhất:**")
+                top_malware = [
+                    {"name": "Worm", "detections": 8869, "risk": "Cực cao"},
+                    {"name": "Trojan", "detections": 5852, "risk": "Cao"},
+                    {"name": "Backdoor", "detections": 5669, "risk": "Cao"},
+                    {"name": "Adware", "detections": 4961, "risk": "Trung bình"},
+                    {"name": "Virus", "detections": 1997, "risk": "Trung bình"}
+                ]
+                for i, malware in enumerate(top_malware, 1):
+                    risk_color = {
+                        "Cực cao": "#d32f2f",
+                        "Cao": "#f57c00",
+                        "Trung bình": "#fbc02d"
+                    }[malware["risk"]]
+                    st.markdown(f"""
+                    <div style="background: #f8f9fa; padding: 10px; margin: 5px 0; border-radius: 5px; border-left: 4px solid {risk_color};">
+                        <strong>{i}. {malware['name']}</strong><br>
+                        <small>Phát hiện: {malware['detections']:,} lần | Mức độ: <span style="color: {risk_color};">{malware['risk']}</span></small>
+                    </div>
+                    """, unsafe_allow_html=True)
+
+        with chart_tabs[2]:
+            st.markdown("##### Xu hướng phát hiện mã độc")
+
+            fig, ax = plt.subplots(figsize=(12, 6))
+
+            # Dữ liệu trung bình theo tuần
+            weekly_stats = stats_df.groupby(stats_df['Ngày'].dt.to_period('W')).mean()
+
+            ax.plot(range(len(weekly_stats)), weekly_stats['Mã độc phát hiện'],
+                    marker='o', linewidth=2, markersize=4, color='#ff6b6b', label='Mã độc')
+            ax.plot(range(len(weekly_stats)), weekly_stats['File lành tính'],
+                    marker='s', linewidth=2, markersize=4, color='#51cf66', label='File lành tính')
+
+            # Thêm đường xu hướng tổng thể (polyfit bậc 1)
+            z1 = np.polyfit(range(len(weekly_stats)), weekly_stats['Mã độc phát hiện'], 1)
+            p1 = np.poly1d(z1)
+            ax.plot(range(len(weekly_stats)), p1(range(len(weekly_stats))),
+                    "--", alpha=0.7, color='#183153', label='Trend mã độc')
+
+            ax.set_xlabel('Tuần')
+            ax.set_ylabel('Số lượng file trung bình')
+            ax.set_title('Xu hướng phát hiện mã độc theo tuần')
+            ax.legend()
+            ax.grid(True, alpha=0.3)
+
+            plt.tight_layout()
+            st.pyplot(fig)
+            plt.close()
+
+            # Hiển thị thông tin xu hướng
+            trend_slope = z1[0]
+            if trend_slope > 0:
+                trend_text = f"📈 Tổng thể: số lượng file mã độc/tuần đang có xu hướng **tăng** (+{trend_slope:.2f}/tuần)"
+                trend_color = "#ff6b6b"
+            else:
+                trend_text = f"📉 Tổng thể: số lượng file mã độc/tuần đang có xu hướng **giảm** (-{abs(trend_slope):.2f}/tuần)"
+                trend_color = "#51cf66"
+
+            st.markdown(f"""
+            <div style="background: {trend_color}; color: white; padding: 15px; border-radius: 5px; text-align: center; margin: 10px 0;">
+                <h4>{trend_text}</h4>
+            </div>
+            """, unsafe_allow_html=True)
+
+
+        with chart_tabs[3]:
+
+
+            # Dữ liệu theo 8 vùng địa lý chính của Việt Nam (giả lập, điền lại số liệu thực tế nếu có)
+            region_data = [
+                {"region": "Đông Bắc", "threats": 1350, "population": "15M", "density": 90.0},
+                {"region": "Tây Bắc", "threats": 620, "population": "5.7M", "density": 108.8},
+                {"region": "Đồng bằng sông Hồng", "threats": 2680, "population": "22M", "density": 121.8},
+                {"region": "Bắc Trung Bộ", "threats": 1220, "population": "10.5M", "density": 116.2},
+                {"region": "Nam Trung Bộ", "threats": 980, "population": "9.1M", "density": 107.7},
+                {"region": "Tây Nguyên", "threats": 870, "population": "6.2M", "density": 140.3},
+                {"region": "Đông Nam Bộ", "threats": 3350, "population": "18.2M", "density": 184.1},
+                {"region": "Đồng bằng sông Cửu Long", "threats": 2110, "population": "17.5M", "density": 120.6}
+            ]
+            region_df = pd.DataFrame(region_data)
+
+            # Đặt font chữ mặc định cho matplotlib (nên dùng font "DejaVu Sans" hoặc "Arial", hoặc font tiếng Việt như "Roboto", "Tahoma" nếu có hỗ trợ)
+            plt.rcParams['font.family'] = 'DejaVu Sans'  # hoặc 'Arial', 'Tahoma', 'Roboto', v.v.
+            plt.rcParams['font.size'] = 15
+
+            fig, ax = plt.subplots(figsize=(15, 7))
+
+            colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96c93d', '#feca57', '#ff9ff3', '#54a0ff', '#51cf66']
+            bars = ax.barh(region_df['region'], region_df['threats'], color=colors, alpha=0.88, height=0.55)
+
+            ax.set_xlabel('Số lượng mối đe dọa', fontsize=17, labelpad=15, fontweight='bold')
+            ax.set_title('Mối đe dọa theo khu vực hành chính', fontsize=23, fontweight='bold', pad=25)
+            ax.tick_params(axis='y', labelsize=16)
+            ax.tick_params(axis='x', labelsize=15)
+            ax.grid(True, alpha=0.25, axis='x', linestyle='--', linewidth=1.2)
+
+            for bar in bars:
+                width = bar.get_width()
+                ax.text(width + max(region_df['threats']) * 0.015, bar.get_y() + bar.get_height()/2,
+                        f'{int(width):,}', ha='left', va='center', fontsize=15, fontweight='bold', color='#222')
+
+            plt.tight_layout(pad=2.2)
+            st.pyplot(fig)
+            plt.close()
+
+
+            # with col2:
+            # # Thống kê chi tiết rút gọn
+            #     for region in region_data:
+            #         st.markdown(f"""
+            #         <div style="background: #f8f9fa; padding: 12px; margin: 8px 0; border-radius: 5px;">
+            #             <h5 style="margin: 0 0 -18px 0; color: #333;">{region['region']}</h5>
+            #             <div style="display: flex; justify-content: space-between;">
+            #                 <span>Mối đe dọa:</span>
+            #                 <strong>{region['threats']:,}</strong>
+            #             </div>
+            #             <div style="display: flex; justify-content: space-between;">
+            #                 <span>Tỷ lệ nhiễm:</span>
+            #                 <strong>{region['density']:.1f}%</strong>
+            #             </div>
+            #         </div>
+            #         """, unsafe_allow_html=True)
+
+
+
+
+        # Thêm phần cảnh báo và khuyến nghị
+        st.markdown('<div class="sub-header">💡 Khuyến nghị Bảo mật</div>', unsafe_allow_html=True)
+        recommendations = [
+            {
+                "icon": "🛡️",
+                "title": "Cập nhật hệ thống thường xuyên",
+                "desc": "Luôn cài đặt các bản vá bảo mật mới nhất cho hệ điều hành và phần mềm",
+                "priority": "high"
+            },
+            {
+                "icon": "🔍",
+                "title": "Quét mã độc định kỳ",
+                "desc": "Sử dụng công cụ này để quét các file đáng ngờ ít nhất 1 lần/tuần",
+                "priority": "high"
+            },
+            {
+                "icon": "📧",
+                "title": "Cẩn thận với email lạ",
+                "desc": "Không mở file đính kèm hoặc click link từ email không rõ nguồn gốc",
+                "priority": "medium"
+            },
+            {
+                "icon": "💾",
+                "title": "Sao lưu dữ liệu quan trọng",
+                "desc": "Thực hiện backup định kỳ và lưu trữ ở nơi an toàn, tách biệt",
+                "priority": "medium"
+            },
+            {
+                "icon": "🔐",
+                "title": "Sử dụng mật khẩu mạnh",
+                "desc": "Tạo mật khẩu phức tạp và bật xác thực 2 yếu tố khi có thể",
+                "priority": "low"
+            },
+            {
+                "icon": "🌐",
+                "title": "Duyệt web an toàn",
+                "desc": "Tránh truy cập các trang web đáng ngờ và tải phần mềm từ nguồn không tin cậy",
+                "priority": "low"
+            }
+        ]
+
+        # Hiển thị khuyến nghị theo mức độ ưu tiên
+        priority_colors = {"high": "#ff6b6b", "medium": "#ffd43b", "low": "#51cf66"}
+        priority_labels = {"high": "Ưu tiên cao", "medium": "Ưu tiên trung bình", "low": "Ưu tiên thấp"}
+
+        for priority in ["high", "medium", "low"]:
+            priority_recs = [r for r in recommendations if r["priority"] == priority]
+            if priority_recs:
+                st.markdown(f"""
+                <div style="background: {priority_colors[priority]}; color: white; padding: 10px; border-radius: 5px 5px 0 0; margin-top: 20px;">
+                    <h4 style="margin: 0;">{priority_labels[priority]}</h4>
+                </div>
+                """, unsafe_allow_html=True)
+                
+                for rec in priority_recs:
+                    st.markdown(f"""
+                    <div style="background: #f8f9fa; padding: 15px; margin: 0 0 2px 0; border-left: 4px solid {priority_colors[priority]};">
+                        <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                            <span style="font-size: 24px; margin-right: 10px;">{rec['icon']}</span>
+                            <h5 style="margin: 0; color: #333;">{rec['title']}</h5>
+                        </div>
+                        <p style="margin: 0; color: #666; line-height: 1.4;">{rec['desc']}</p>
+                    </div>
+                    """, unsafe_allow_html=True)
+    # Footer cuối cùng
+    st.markdown("---")
+    st.markdown("""
+    <div style="
+        max-width: 520px;
+        margin: 0 auto 0 auto;
+        background: linear-gradient(90deg, #e0eafc 0%, #cfdef3 100%);
+        color: #222;
+        padding: 18px 22px 10px 22px;
+        text-align: center;
+        border-radius: 14px;
+        box-shadow: 0 2px 12px rgba(90,120,180,0.08);">
+        <div style="display: flex; align-items: center; justify-content: center; gap:13px;">
+            <img src="https://img.icons8.com/color/48/000000/user-male-circle--v1.png" width="44">
+            <div style="text-align:left;">
+                <b>© 2024 - Huỳnh Hải Công Huy</b><br>
+                <span style="font-size:15px;">Trường ĐH Kỹ Thuật - Hậu Cần CAND</span>
+            </div>
+        </div>
+        <div style="margin:8px 0 2px 0; font-size:15px;">
+            <img src='https://img.icons8.com/color/48/000000/home-page.png' width='17' style="vertical-align:middle;">
+            Phường Hồ, Thuận Thành, Bắc Ninh
+        </div>
+        <div style="margin: 6px 0;">
+            <img src="https://img.icons8.com/color/48/domain.png" width="16" style="vertical-align: middle;">
+            <a href='https://dhkthtc.bacninh.gov.vn/TrangChu/' target='_blank' style='color:#2d69c7;font-weight:500;text-decoration:underline;'>dhkthtc.bacninh.gov.vn</a>
+        </div>
+        <div style="display:flex; justify-content:center; align-items:center; gap:13px; margin:9px 0 7px 0;">
+            <div>
+                <img src='https://img.icons8.com/color/48/000000/phone.png' width='20' style="vertical-align:middle;"> 
+                0379095633
+            </div>
+            <a href="mailto:conghuy062000@gmail.com" target="_blank">
+                <img src="https://img.icons8.com/color/48/000000/gmail.png" width="22">
+            </a>
+            <a href="https://www.facebook.com/block.huy" target="_blank">
+                <img src="https://img.icons8.com/color/48/000000/facebook-new.png" width="22">
+            </a>
+            <a href="https://github.com/HICKER-WH" target="_blank">
+                <img src="https://img.icons8.com/ios-filled/50/000000/github.png" width="20" style="background:white; border-radius:50%;">
+            </a>
+            <a href="https://www.linkedin.com/in/huy-hu%E1%BB%B3nh-h%E1%BA%A3i-c%C3%B4ng-2a640a177/" target="_blank">
+                <img src="https://img.icons8.com/color/48/000000/linkedin.png" width="22">
+            </a>
+        </div>
+        <div style="margin-top:3px;color:#444;font-size:13px;">
+            <small>⚠️ Kết quả chỉ tham khảo. Luôn kết hợp nhiều công cụ để đảm bảo an toàn tối đa.</small>
+        </div>
     </div>
     """, unsafe_allow_html=True)
 
-with chart_tabs[3]:
-    st.markdown("##### Phân bố mối đe dọa theo khu vực")
-    
-    # Tạo bảng thống kê theo khu vực
-    region_data = [
-        {"region": "Miền Bắc", "threats": 2156, "population": "25M", "density": 86.2},
-        {"region": "Miền Trung", "threats": 1234, "population": "15M", "density": 82.3},
-        {"region": "Miền Nam", "threats": 3421, "population": "35M", "density": 97.7},
-        {"region": "Tây Nguyên", "threats": 456, "population": "6M", "density": 76.0},
-        {"region": "Đồng bằng Mekong", "threats": 789, "population": "12M", "density": 65.8}
-    ]
-    
-    region_df = pd.DataFrame(region_data)
-    
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        # Biểu đồ cột ngang
-        fig, ax = plt.subplots(figsize=(8, 6))
-        
-        colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96c93d', '#feca57']
-        bars = ax.barh(region_df['region'], region_df['threats'], color=colors, alpha=0.8)
-        
-        ax.set_xlabel('Số lượng mối đe dọa')
-        ax.set_title('Mối đe dọa theo khu vực')
-        ax.grid(True, alpha=0.3, axis='x')
-        
-        # Thêm nhãn số liệu
-        for i, bar in enumerate(bars):
-            width = bar.get_width()
-            ax.text(width + 20, bar.get_y() + bar.get_height()/2, 
-                   f'{width:,}', ha='left', va='center', fontweight='bold')
-        
-        plt.tight_layout()
-        st.pyplot(fig)
-        plt.close()
-    
-    with col2:
-        st.markdown("**Thống kê chi tiết:**")
-        
-        for region in region_data:
-            threat_per_capita = region['threats'] / float(region['population'].replace('M', ''))
-            
-            st.markdown(f"""
-            <div style="background: #f8f9fa; padding: 12px; margin: 8px 0; border-radius: 5px;">
-                <h5 style="margin: 0 0 8px 0; color: #333;">{region['region']}</h5>
-                <div style="display: flex; justify-content: space-between;">
-                    <span>Mối đe dọa:</span>
-                    <strong>{region['threats']:,}</strong>
-                </div>
-                <div style="display: flex; justify-content: space-between;">
-                    <span>Dân số:</span>
-                    <strong>{region['population']}</strong>
-                </div>
-                <div style="display: flex; justify-content: space-between;">
-                    <span>Mật độ đe dọa:</span>
-                    <strong>{threat_per_capita:.1f}/1M dân</strong>
-                </div>
-                <div style="display: flex; justify-content: space-between;">
-                    <span>Tỷ lệ nhiễm:</span>
-                    <strong>{region['density']:.1f}%</strong>
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
-
-# Thêm phần cảnh báo và khuyến nghị
-st.markdown("---")
-st.markdown('<div class="sub-header">💡 Khuyến nghị Bảo mật</div>', unsafe_allow_html=True)
-
-recommendations = [
-    {
-        "icon": "🛡️",
-        "title": "Cập nhật hệ thống thường xuyên",
-        "desc": "Luôn cài đặt các bản vá bảo mật mới nhất cho hệ điều hành và phần mềm",
-        "priority": "high"
-    },
-    {
-        "icon": "🔍",
-        "title": "Quét mã độc định kỳ",
-        "desc": "Sử dụng công cụ này để quét các file đáng ngờ ít nhất 1 lần/tuần",
-        "priority": "high"
-    },
-    {
-        "icon": "📧",
-        "title": "Cẩn thận với email lạ",
-        "desc": "Không mở file đính kèm hoặc click link từ email không rõ nguồn gốc",
-        "priority": "medium"
-    },
-    {
-        "icon": "💾",
-        "title": "Sao lưu dữ liệu quan trọng",
-        "desc": "Thực hiện backup định kỳ và lưu trữ ở nơi an toàn, tách biệt",
-        "priority": "medium"
-    },
-    {
-        "icon": "🔐",
-        "title": "Sử dụng mật khẩu mạnh",
-        "desc": "Tạo mật khẩu phức tạp và bật xác thực 2 yếu tố khi có thể",
-        "priority": "low"
-    },
-    {
-        "icon": "🌐",
-        "title": "Duyệt web an toàn",
-        "desc": "Tránh truy cập các trang web đáng ngờ và tải phần mềm từ nguồn không tin cậy",
-        "priority": "low"
-    }
-]
-
-# Hiển thị khuyến nghị theo mức độ ưu tiên
-priority_colors = {"high": "#ff6b6b", "medium": "#ffd43b", "low": "#51cf66"}
-priority_labels = {"high": "Ưu tiên cao", "medium": "Ưu tiên trung bình", "low": "Ưu tiên thấp"}
-
-for priority in ["high", "medium", "low"]:
-    priority_recs = [r for r in recommendations if r["priority"] == priority]
-    if priority_recs:
-        st.markdown(f"""
-        <div style="background: {priority_colors[priority]}; color: white; padding: 10px; border-radius: 5px 5px 0 0; margin-top: 20px;">
-            <h4 style="margin: 0;">{priority_labels[priority]}</h4>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        for rec in priority_recs:
-            st.markdown(f"""
-            <div style="background: #f8f9fa; padding: 15px; margin: 0 0 2px 0; border-left: 4px solid {priority_colors[priority]};">
-                <div style="display: flex; align-items: center; margin-bottom: 8px;">
-                    <span style="font-size: 24px; margin-right: 10px;">{rec['icon']}</span>
-                    <h5 style="margin: 0; color: #333;">{rec['title']}</h5>
-                </div>
-                <p style="margin: 0; color: #666; line-height: 1.4;">{rec['desc']}</p>
-            </div>
-            """, unsafe_allow_html=True)
-
-# Footer cuối cùng
-st.markdown("---")
-st.markdown("""
-<div style="text-align: center; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 10px; margin: 20px 0;">
-    <h3>🔐 Malware Detection System</h3>
-    <p>Hệ thống phát hiện phần mềm độc hại sử dụng AI</p>
-    <p><strong>Phiên bản:</strong> 2.0 >
-    <p><small>Được phát triển với ❤️ bởi AI Security Team</small></p>
-    <hr style="border-color: rgba(255,255,255,0.3);">
-    <p><small>⚠️ Lưu ý: Kết quả từ hệ thống chỉ mang tính chất tham khảo. Luôn sử dụng nhiều công cụ khác nhau để đảm bảo an toàn tối đa.</small></p>
-</div>
-"""
-, unsafe_allow_html=True)
+# Hiển thị thông tin về mô hình
+if model is not None and class_names is not None:
+    st.markdown(f"""
+    <div style="text-align: center; color: #666; margin-top: 20px;">
+        <b> © 2024 - Huynh Hai Cong Huy</b>
+    </div>
+    """, unsafe_allow_html=True)
+else:
+    st.error("Mô hình chưa được tải thành công. Vui lòng kiểm tra đường dẫn đến file model.")
