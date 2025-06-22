@@ -1217,18 +1217,22 @@ with tab2:
 
                     # Tạo biểu đồ tròn
                     if total_files > 0:
-                        fig, ax = plt.subplots(figsize=(8, 6))
-                        labels = ['Mã độc', 'Lành tính', 'Không chắc chắn']
-                        sizes = [malware_count, benign_count, uncertain_count]
-                        colors = ['#ff6b6b', '#51cf66', '#ffd43b']
-                        explode = (0.1, 0, 0)  # Làm nổi bật phần mã độc
-                        
-                        ax.pie(sizes, explode=explode, labels=labels, colors=colors, autopct='%1.1f%%',
-                               shadow=True, startangle=90)
-                        ax.set_title('Phân bố kết quả quét')
-                        
-                        st.pyplot(fig)
-                        plt.close()
+                        benign_count = total_files - malware_count - uncertain_count
+                        sizes = [malware_count, max(0, benign_count), uncertain_count]
+                        if any(x < 0 for x in sizes):
+                            sizes = [max(0, x) for x in sizes]
+                        if sum(sizes) == 0:
+                            st.warning("Không có dữ liệu để vẽ biểu đồ tròn.")
+                        else:
+                            fig, ax = plt.subplots(figsize=(8, 6))
+                            labels = ['Mã độc', 'Lành tính', 'Không chắc chắn']
+                            colors = ['#ff6b6b', '#51cf66', '#ffd43b']
+                            explode = (0.1, 0, 0)
+                            ax.pie(sizes, explode=explode, labels=labels, colors=colors, autopct='%1.1f%%',
+                                   shadow=True, startangle=90)
+                            ax.set_title('Phân bố kết quả quét')
+                            st.pyplot(fig)
+                            plt.close()
 
                     # Hiển thị kết quả chi tiết
                     st.markdown('<div class="sub-header">📋 Kết quả chi tiết</div>', unsafe_allow_html=True)
