@@ -2951,7 +2951,5 @@ if model is not None and class_names is not None:
         <b> © 2025 - Huynh Hai Cong Huy</b>
     </div>
     """, unsafe_allow_html=True)
-
->>>>>>> 58fc52c (Cập nhật code: sửa bug/thêm tính năng XYZ)
 else:
     st.error("Mô hình chưa được tải thành công. Vui lòng kiểm tra đường dẫn đến file model.")
