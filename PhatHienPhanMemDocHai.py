@@ -770,7 +770,6 @@ elif model_source == "Upload từ máy tính" and uploaded_model is not None:
     model, class_names = load_pytorch_model_from_upload(uploaded_model, device)
 
 # --- Tab chính ---
-tab1, tab2, tab3, tab4 = st.tabs(["📄 Quét chương trình đơn lẻ", "📁 Quét nhanh chương trình trong thư mục", "💻 SOC VIỆT NAM", "ℹ️ Thông tin chung"])
 tab1, tab2, tab3, tab4 = st.tabs(["📄 Quét chương trình đơn lẻ", "📁 Quét nhanh chương trình trong thư mục", "💻 SOC Việt Nam", "ℹ️ Thông tin chung"])
 
 # --- Tab phân tích file đơn lẻ ---
@@ -1216,24 +1215,24 @@ with tab2:
                     with col4:
                         st.metric("Không chắc chắn", uncertain_count, delta=f"{uncertain_count/total_files*100:.1f}%" if total_files > 0 else "0%")
 
-                    # Tạo biểu đồ tròn
-                    if total_files > 0:
-                        benign_count = total_files - malware_count - uncertain_count
-                        sizes = [malware_count, max(0, benign_count), uncertain_count]
-                        if any(x < 0 for x in sizes):
-                            sizes = [max(0, x) for x in sizes]
-                        if sum(sizes) == 0:
-                            st.warning("Không có dữ liệu để vẽ biểu đồ tròn.")
-                        else:
-                            fig, ax = plt.subplots(figsize=(8, 6))
-                            labels = ['Mã độc', 'Lành tính', 'Không chắc chắn']
-                            colors = ['#ff6b6b', '#51cf66', '#ffd43b']
-                            explode = (0.1, 0, 0)
-                            ax.pie(sizes, explode=explode, labels=labels, colors=colors, autopct='%1.1f%%',
-                                   shadow=True, startangle=90)
-                            ax.set_title('Phân bố kết quả quét')
-                            st.pyplot(fig)
-                            plt.close()
+                    # # Tạo biểu đồ tròn
+                    # if total_files > 0:
+                    #     benign_count = total_files - malware_count - uncertain_count
+                    #     sizes = [malware_count, max(0, benign_count), uncertain_count]
+                    #     if any(x < 0 for x in sizes):
+                    #         sizes = [max(0, x) for x in sizes]
+                    #     if sum(sizes) == 0:
+                    #         st.warning("Không có dữ liệu để vẽ biểu đồ tròn.")
+                    #     else:
+                    #         fig, ax = plt.subplots(figsize=(8, 6))
+                    #         labels = ['Mã độc', 'Lành tính', 'Không chắc chắn']
+                    #         colors = ['#ff6b6b', '#51cf66', '#ffd43b']
+                    #         explode = (0.1, 0, 0)
+                    #         ax.pie(sizes, explode=explode, labels=labels, colors=colors, autopct='%1.1f%%',
+                    #                shadow=True, startangle=90)
+                    #         ax.set_title('Phân bố kết quả quét')
+                    #         st.pyplot(fig)
+                    #         plt.close()
                     # TÍNH NĂNG MỚI: Thêm biểu đồ phân bố loại mã độc
                     if results:
                         # Tất cả các code duyệt results nằm ở đây!
@@ -1478,6 +1477,7 @@ with tab2:
                     del st.session_state['scan_dir']
                 except:
                     pass
+
             st.markdown(
                 """
                 <style>
@@ -1765,7 +1765,7 @@ with tab3:
             st.markdown("""
             <div style="background: linear-gradient(135deg, #4ecdc4, #44a08d); color: white; padding: 20px; border-radius: 10px; text-align: center;">
                 <h4>🛡️ Tỷ lệ phát hiện</h4>
-                <h2>94.7%</h2>
+                <h2>99.16%</h2>
                 <p>Độ chính xác của hệ thống</p>
                 <small>Dựa trên 10,000+ mẫu</small>
             </div>
@@ -2935,9 +2935,7 @@ with tab4:
                 <img src="https://img.icons8.com/color/48/000000/linkedin.png" width="22">
             </a>
         </div>
-        <div style="margin-top:3px;color:#444;font-size:13px;">
-            <small>⚠️ Kết quả chỉ tham khảo. Luôn kết hợp nhiều công cụ để đảm bảo an toàn tối đa.</small>
-        </div>
+        
     </div>
     """, unsafe_allow_html=True)
 
@@ -2945,11 +2943,9 @@ with tab4:
 if model is not None and class_names is not None:
     st.markdown(f"""
     <div style="text-align: center; color: #666; margin-top: 20px;">
-        <b> © 2024 - Huynh Hai Cong Huy</b>
-    </div>
-    """, unsafe_allow_html=True)
         <b> © 2025 - Huynh Hai Cong Huy</b>
     </div>
     """, unsafe_allow_html=True)
+    
 else:
     st.error("Mô hình chưa được tải thành công. Vui lòng kiểm tra đường dẫn đến file model.")
