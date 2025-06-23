@@ -1326,7 +1326,6 @@ with tab2:
                     #         ax.set_title('Phân bố kết quả quét')
                     #         st.pyplot(fig)
                     #         plt.close()
->>>>>>> 58fc52c (Cập nhật code: sửa bug/thêm tính năng XYZ)
 
                     # Hiển thị kết quả chi tiết
                     st.markdown('<div class="sub-header">📋 Kết quả chi tiết</div>', unsafe_allow_html=True)
@@ -1500,7 +1499,6 @@ with tab2:
                 unsafe_allow_html=True
             )
       
->>>>>>> 58fc52c (Cập nhật code: sửa bug/thêm tính năng XYZ)
 with tab3:
      # Hiển thị bản đồ Việt Nam với thông tin về mối đe dọa
         st.markdown('<div class="map-header">🗺️ Giám sát an ninh mạng quốc gia: Bản đồ Việt Nam</div>', unsafe_allow_html=True)
@@ -2944,12 +2942,9 @@ with tab4:
                 <img src="https://img.icons8.com/color/48/000000/linkedin.png" width="22">
             </a>
         </div>
-<<<<<<< HEAD
         <div style="margin-top:3px;color:#444;font-size:13px;">
             <small>⚠️ Kết quả chỉ tham khảo. Luôn kết hợp nhiều công cụ để đảm bảo an toàn tối đa.</small>
         </div>
-=======
->>>>>>> 58fc52c (Cập nhật code: sửa bug/thêm tính năng XYZ)
     </div>
     """, unsafe_allow_html=True)
 
@@ -2957,11 +2952,9 @@ with tab4:
 if model is not None and class_names is not None:
     st.markdown(f"""
     <div style="text-align: center; color: #666; margin-top: 20px;">
-<<<<<<< HEAD
         <b> © 2024 - Huynh Hai Cong Huy</b>
     </div>
     """, unsafe_allow_html=True)
-=======
         <b> © 2025 - Huynh Hai Cong Huy</b>
     </div>
     """, unsafe_allow_html=True)
