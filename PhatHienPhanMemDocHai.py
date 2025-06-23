@@ -311,7 +311,7 @@ st.markdown('''
         <img src="https://raw.githubusercontent.com/HICKER-WH/PhatHienPhanMemDocHai/main/Logot07.png" alt="Logo" style="height: 60px;">
     </a>
     <div class="title-container">
-        <span class="title-line">🔍 Phát Hiện Phần Mềm Hại</span>
+        <span class="title-line">🔍 Phát Hiện Phần Mềm Độc Hại</span>
         <span class="title-line">Trên Nền Tảng Windows</span>
     </div>
 </div>
@@ -770,7 +770,11 @@ elif model_source == "Upload từ máy tính" and uploaded_model is not None:
     model, class_names = load_pytorch_model_from_upload(uploaded_model, device)
 
 # --- Tab chính ---
+<<<<<<< HEAD
 tab1, tab2, tab3, tab4 = st.tabs(["📄 Quét chương trình đơn lẻ", "📁 Quét nhanh chương trình trong thư mục", "💻 SOC VIỆT NAM", "ℹ️ Thông tin chung"])
+=======
+tab1, tab2, tab3, tab4 = st.tabs(["📄 Quét chương trình đơn lẻ", "📁 Quét nhanh chương trình trong thư mục", "💻 SOC Việt Nam", "ℹ️ Thông tin chung"])
+>>>>>>> 58fc52c (Cập nhật code: sửa bug/thêm tính năng XYZ)
 
 # --- Tab phân tích file đơn lẻ ---
 with tab1:
@@ -867,18 +871,15 @@ with tab1:
                                 with detail_tabs[0]:
                                     # Tab tổng quan
                                     col1, col2 = st.columns(2)
-                                    
                                     with col1:
                                         st.markdown("#### Thông tin cơ bản")
                                         st.markdown(f"**MD5:** `{hashlib.md5(file_bytes).hexdigest()}`")
                                         st.markdown(f"**SHA-1:** `{hashlib.sha1(file_bytes).hexdigest()}`")
                                         st.markdown(f"**SHA-256:** `{hashlib.sha256(file_bytes).hexdigest()}`")
                                         st.markdown(f"**Kích thước:** `{len(file_bytes):,}` bytes")
-                                        
                                         # Tính entropy
                                         entropy = calculate_entropy(file_bytes)
                                         st.markdown(f"**Entropy:** `{entropy:.4f}/8.0`")
-                                        
                                         # Đánh giá entropy
                                         if entropy < 6.0:
                                             entropy_eval = "Thấp (file thông thường)"
@@ -886,15 +887,11 @@ with tab1:
                                             entropy_eval = "Trung bình (có thể nén/mã hóa một phần)"
                                         else:
                                             entropy_eval = "Cao (có thể được nén/mã hóa/đóng gói)"
-                                        
                                         st.markdown(f"**Đánh giá entropy:** {entropy_eval}")
-                                    
                                     with col2:
                                         st.markdown("#### Đánh giá mối đe dọa")
-                                        
                                         # Tạo thang điểm đe dọa dựa trên xác suất và entropy
                                         threat_score = int((prob * 0.7 + min(entropy/8.0, 1.0) * 0.3) * 10)
-                                        
                                         # Hiển thị thang điểm đe dọa
                                         threat_color = "red" if threat_score >= 7 else "orange" if threat_score >= 4 else "green"
                                         st.markdown(f"""
@@ -1073,6 +1070,21 @@ with tab1:
                                         if len(ascii_strings) > max_strings:
                                             st.info(f"Hiển thị {max_strings}/{len(ascii_strings)} chuỗi")
 
+            st.markdown(
+                """
+                <style>
+                    .info-text {
+                        color: #888888; /* Màu xám nhạt */
+                        font-size: 16px;
+                        opacity: 0.7;   /* Chìm nhẹ */
+                    }
+                </style>
+                <div class="info-text">⚠️ Lưu ý: Hệ thống sử dụng các thuật toán và mô hình trí tuệ nhân tạo để phát hiện mã độc, các kết quả phân tích không thể đảm bảo chính xác tuyệt đối trong mọi trường hợp!</div>
+                """,
+                unsafe_allow_html=True
+            )
+
+
 # --- Tab quét thư mục ---
 with tab2:
     st.markdown('<div class="sub-header">📁 Quét thư mục chứa file .exe và .dll</div>', unsafe_allow_html=True)
@@ -1167,36 +1179,28 @@ with tab2:
                     st.session_state['scan_dir'] = folder_path
                     st.session_state['do_scan'] = True
 
-        # Cấu hình quét nâng cao
-        with st.expander("⚙️ Cấu hình quét nâng cao"):
-            col1, col2, col3 = st.columns(3)
+        # # Cấu hình quét nâng cao
+        # with st.expander("⚙️ Cấu hình quét nâng cao"):
+        #     col1, col2, col3 = st.columns(3)
             
-            with col1:
-                min_size_kb = st.number_input("Kích thước file tối thiểu (KB)", value=0, min_value=0, max_value=1000)
+        #     with col1:
+        #         min_size_kb = st.number_input("Kích thước file tối thiểu (KB)", value=0, min_value=0, max_value=1000)
                 
-            with col2:
-                max_size_mb = st.number_input("Kích thước file tối đa (MB)", value=max_file_size, min_value=1, max_value=max_file_size)
+        #     with col2:
+        #         max_size_mb = st.number_input("Kích thước file tối đa (MB)", value=max_file_size, min_value=1, max_value=max_file_size)
                 
-            with col3:
-                analysis_depth = st.selectbox("Độ sâu phân tích", ["Nhanh", "Cân bằng", "Sâu"])
+        #     with col3:
+        #         analysis_depth = st.selectbox("Độ sâu phân tích", ["Nhanh", "Cân bằng", "Sâu"])
 
         # Thực hiện quét nếu có yêu cầu
-        if st.session_state.get('do_scan', False):
-            scan_dir = st.session_state.get('scan_dir')
-            
-            if scan_dir and os.path.exists(scan_dir):
-                st.markdown('<div class="sub-header">🔍 Đang quét thư mục...</div>', unsafe_allow_html=True)
-                
-                # Thực hiện quét
-                scan_results, malware_count, uncertain_count, total_files = scan_directory(
-                    scan_dir, model, class_names, device, benign_classes, threshold,
-                    min_size_kb, max_size_mb, analysis_depth
+        if model is not None and 'do_scan' in st.session_state and st.session_state['do_scan']:
+            scan_dir = st.session_state['scan_dir']
+            with st.spinner("Đang quét thư mục..."):
+                results, malware_count, uncertain_count, total_files = scan_directory(
+                    scan_dir, model, class_names, device, benign_classes, threshold
                 )
-                
-                # Xóa cờ quét để tránh quét lại
-                st.session_state['do_scan'] = False
-                
-                if scan_results:
+            st.session_state['do_scan'] = False
+            if results:
                     # Hiển thị tổng quan kết quả
                     st.markdown('<div class="sub-header">📊 Tổng quan kết quả</div>', unsafe_allow_html=True)
                     
@@ -1215,6 +1219,7 @@ with tab2:
                     with col4:
                         st.metric("Không chắc chắn", uncertain_count, delta=f"{uncertain_count/total_files*100:.1f}%" if total_files > 0 else "0%")
 
+<<<<<<< HEAD
                     # Tạo biểu đồ tròn
                     if total_files > 0:
                         benign_count = total_files - malware_count - uncertain_count
@@ -1233,6 +1238,96 @@ with tab2:
                             ax.set_title('Phân bố kết quả quét')
                             st.pyplot(fig)
                             plt.close()
+=======
+                    # TÍNH NĂNG MỚI: Thêm biểu đồ phân bố loại mã độc
+                    if results:
+                        # Tất cả các code duyệt results nằm ở đây!
+                        if malware_count > 0:
+                            st.markdown("### 📊 Phân bố loại mã độc")
+                            malware_types = {}
+                            for r in results:
+                
+                            # Tạo DataFrame cho biểu đồ
+                                malware_types = {}
+                                for r in results:
+                                    if r["Là mã độc"] and r["Kết quả"] == 1:
+                                        malware_type = r["Top dự đoán"][0]["Lớp"]
+                                        if malware_type in malware_types:
+                                            malware_types[malware_type] += 1
+                                        else:
+                                            malware_types[malware_type] = 1
+                        
+                        if malware_types:
+                            malware_df = pd.DataFrame({
+                                'Loại mã độc': list(malware_types.keys()),
+                                'Số lượng': list(malware_types.values())
+                            })
+                            
+                        # Hiển thị biểu đồ
+                        col1, col2 = st.columns(2)
+                        # BIỂU ĐỒ CỘT
+                        with col1:
+                            num_types = len(malware_df['Loại mã độc'])
+                            cmap = plt.get_cmap('tab10')
+                            colors = [cmap(i % cmap.N) for i in range(num_types)]
+                            
+                            fig, ax = plt.subplots(figsize=(8, 5))  # Giữ nguyên kích thước
+                            bars = ax.bar(
+                                malware_df['Loại mã độc'],
+                                malware_df['Số lượng'],
+                                width=0.3,
+                                color=colors,        # Thêm dòng này để set màu theo tab10
+                                edgecolor='gray',    # (tùy chọn) thêm đường viền cho chuyên nghiệp
+                                linewidth=0.7
+                            )
+                            ax.set_ylabel('Số lượng', fontsize=10)
+                            ax.set_title('Phân bố loại mã độc', fontsize=11)
+                            ax.tick_params(axis='x', labelsize=9)
+                            ax.tick_params(axis='y', labelsize=9)
+                            plt.xticks(rotation=90, ha='right', fontsize=9)
+                            plt.yticks(fontsize=9)
+                            plt.tight_layout()
+                            st.pyplot(fig)
+
+
+                        # BIỂU ĐỒ TRÒN
+                        with col2:
+                            fig, ax = plt.subplots(figsize=(5, 3))
+                            def small_pct(pct):
+                                return f'{pct:.1f}%' if pct > 2 else ''  # chỉ hiển thị nếu >2%
+                            wedges, texts, autotexts = ax.pie(
+                                malware_df['Số lượng'],
+                                labels=malware_df['Loại mã độc'],
+                                autopct=small_pct,
+                                textprops={'fontsize': 9}
+                            )
+                            for autotext in autotexts:
+                                autotext.set_fontsize(8)  # font nhỏ cho %
+                            for text in texts:
+                                text.set_fontsize(9)      # font nhỏ cho label
+                            ax.axis('equal')
+                            plt.tight_layout()
+                            st.pyplot(fig)
+
+                    # # Tạo biểu đồ tròn
+                    # if total_files > 0:
+                    #     benign_count = total_files - malware_count - uncertain_count
+                    #     sizes = [malware_count, max(0, benign_count), uncertain_count]
+                    #     if any(x < 0 for x in sizes):
+                    #         sizes = [max(0, x) for x in sizes]
+                    #     if sum(sizes) == 0:
+                    #         st.warning("Không có dữ liệu để vẽ biểu đồ tròn.")
+                    #     else:
+                    #         fig, ax = plt.subplots(figsize=(8, 6))
+                    #         labels = ['Mã độc', 'Lành tính', 'Không chắc chắn']
+                    #         colors = ['#ff6b6b', '#51cf66', '#ffd43b']
+                    #         explode = (0.1, 0, 0)
+                    #         ax.pie(sizes, explode=explode, labels=labels, colors=colors, autopct='%1.1f%%',
+                    #                shadow=True, startangle=90)
+                    #         ax.set_title('Phân bố kết quả quét')
+                    #         st.pyplot(fig)
+                    #         plt.close()
+>>>>>>> 58fc52c (Cập nhật code: sửa bug/thêm tính năng XYZ)
 
                     # Hiển thị kết quả chi tiết
                     st.markdown('<div class="sub-header">📋 Kết quả chi tiết</div>', unsafe_allow_html=True)
@@ -1244,9 +1339,10 @@ with tab2:
                         result_tabs = st.tabs(["✅ Lành tính", "⚠️ Không chắc chắn", "📊 Tất cả"])
                     
                     # Phân loại kết quả
-                    malware_files = [r for r in scan_results if r["Là mã độc"] and r["Kết quả"] == 1]
-                    benign_files = [r for r in scan_results if not r["Là mã độc"] and r["Kết quả"] == 0]
-                    uncertain_files = [r for r in scan_results if r["Kết quả"] == 2]
+                    
+                    malware_files = [r for r in results if r["Là mã độc"] and r["Kết quả"] == 1]
+                    benign_files = [r for r in results if not r["Là mã độc"] and r["Kết quả"] == 0]
+                    uncertain_files = [r for r in results if r["Kết quả"] == 2]
                     
                     tab_index = 0
                     
@@ -1283,21 +1379,22 @@ with tab2:
                             st.success(f"✅ {len(benign_files)} file được xác định là lành tính")
                             
                             # Checkbox để hiển thị file lành tính
-                            show_clean_files = st.checkbox("Hiển thị danh sách file lành tính", value=False)
+                            # show_clean_files = st.checkbox("Hiển thị danh sách file lành tính", value=False)
+                            # show_clean_files = st.checkbox("Hiển thị danh sách file lành tính", value=False, key="show_clean_files_benign_tab")
                             
                             if show_clean_files:
                                 benign_df = pd.DataFrame([{
-                                    "Tên file": r["Tên file"],
-                                    "Kích thước (KB)": r["Kích thước (KB)"],
-                                    "Loại": r["Loại"],
-                                    "Xác suất": f"{r['Xác suất']:.2%}",
-                                    "Đường dẫn": r["Đường dẫn"]
-                                } for r in benign_files])
+                                "Tên file": r["Tên file"],
+                                "Kích thước (KB)": r["Kích thước (KB)"],
+                                "Loại": r["Loại"],
+                                "Kết quả": r["Kết quả"],    # Thêm dòng này để debug
+                                "Xác suất": f"{r['Xác suất']:.2%}",
+                                "Đường dẫn": r["Đường dẫn"]
+                            } for r in benign_files])
                                 
                                 st.dataframe(benign_df, use_container_width=True)
                         else:
                             st.info("Không có file nào được xác định là lành tính với độ tin cậy cao")
-                    
                     tab_index += 1
                     
                     # Tab không chắc chắn
@@ -1322,7 +1419,7 @@ with tab2:
                     
                     # Tab tất cả
                     with result_tabs[tab_index]:
-                        st.info(f"Hiển thị tất cả {len(scan_results)} file đã quét")
+                        st.info(f"Hiển thị tất cả {len(results)} file đã quét")
                         
                         # Tạo DataFrame với tất cả kết quả
                         all_results_df = pd.DataFrame([{
@@ -1333,7 +1430,7 @@ with tab2:
                             "Loại": r["Loại"],
                             "Xác suất": f"{r['Xác suất']:.2%}",
                             "Đường dẫn": r["Đường dẫn"]
-                        } for r in scan_results])
+                        } for r in results])
                         
                         st.dataframe(all_results_df, use_container_width=True)
                         
@@ -1346,39 +1443,39 @@ with tab2:
                             mime="text/csv"
                         )
 
-                    # Thống kê nâng cao
-                    if analysis_depth == "Sâu":
-                        st.markdown('<div class="sub-header">📈 Thống kê nâng cao</div>', unsafe_allow_html=True)
+                    # # Thống kê nâng cao
+                    # if analysis_depth == "Sâu":
+                    #     st.markdown('<div class="sub-header">📈 Thống kê nâng cao</div>', unsafe_allow_html=True)
                         
-                        # Phân tích entropy
-                        entropy_values = [r["Entropy"] for r in scan_results if r["Entropy"] is not None]
-                        if entropy_values:
-                            col1, col2 = st.columns(2)
+                        # # Phân tích entropy
+                        # entropy_values = [r["Entropy"] for r in scan_results if r["Entropy"] is not None]
+                        # if entropy_values:
+                        #     col1, col2 = st.columns(2)
                             
-                            with col1:
-                                st.markdown("##### Phân bố Entropy")
-                                fig, ax = plt.subplots(figsize=(8, 4))
-                                ax.hist(entropy_values, bins=20, alpha=0.7, color='skyblue', edgecolor='black')
-                                ax.set_xlabel('Entropy')
-                                ax.set_ylabel('Số lượng file')
-                                ax.set_title('Phân bố Entropy của các file')
-                                st.pyplot(fig)
-                                plt.close()
+                        #     with col1:
+                        #         st.markdown("##### Phân bố Entropy")
+                        #         fig, ax = plt.subplots(figsize=(8, 4))
+                        #         ax.hist(entropy_values, bins=20, alpha=0.7, color='skyblue', edgecolor='black')
+                        #         ax.set_xlabel('Entropy')
+                        #         ax.set_ylabel('Số lượng file')
+                        #         ax.set_title('Phân bố Entropy của các file')
+                        #         st.pyplot(fig)
+                        #         plt.close()
                             
-                            with col2:
-                                st.markdown("##### Thống kê Entropy")
-                                st.write(f"**Entropy trung bình:** {np.mean(entropy_values):.4f}")
-                                st.write(f"**Entropy cao nhất:** {np.max(entropy_values):.4f}")
-                                st.write(f"**Entropy thấp nhất:** {np.min(entropy_values):.4f}")
-                                st.write(f"**Độ lệch chuẩn:** {np.std(entropy_values):.4f}")
+                        #     with col2:
+                        #         st.markdown("##### Thống kê Entropy")
+                        #         st.write(f"**Entropy trung bình:** {np.mean(entropy_values):.4f}")
+                        #         st.write(f"**Entropy cao nhất:** {np.max(entropy_values):.4f}")
+                        #         st.write(f"**Entropy thấp nhất:** {np.min(entropy_values):.4f}")
+                        #         st.write(f"**Độ lệch chuẩn:** {np.std(entropy_values):.4f}")
                                 
-                                # Cảnh báo về entropy cao
-                                high_entropy_files = [r for r in scan_results if r["Entropy"] and r["Entropy"] > 7.0]
-                                if high_entropy_files:
-                                    st.warning(f"⚠️ {len(high_entropy_files)} file có entropy > 7.0 (có thể được đóng gói/mã hóa)")
+                        #         # Cảnh báo về entropy cao
+                        #         high_entropy_files = [r for r in scan_results if r["Entropy"] and r["Entropy"] > 7.0]
+                        #         if high_entropy_files:
+                        #             st.warning(f"⚠️ {len(high_entropy_files)} file có entropy > 7.0 (có thể được đóng gói/mã hóa)")
 
-                else:
-                    st.warning("Không tìm thấy file .exe hoặc .dll nào trong thư mục được chỉ định.")
+                        # else:
+                        #     st.warning("Không tìm thấy file .exe hoặc .dll nào trong thư mục được chỉ định.")
             
             # Dọn dẹp thư mục tạm nếu cần
             if option == "Tải lên file ZIP" and 'scan_dir' in st.session_state:
@@ -1387,6 +1484,24 @@ with tab2:
                     del st.session_state['scan_dir']
                 except:
                     pass
+<<<<<<< HEAD
+=======
+
+            st.markdown(
+                """
+                <style>
+                    .info-text {
+                        color: #888888; /* Màu xám nhạt */
+                        font-size: 16px;
+                        opacity: 0.7;   /* Chìm nhẹ */
+                    }
+                </style>
+                <div class="info-text">⚠️ Lưu ý: Hệ thống sử dụng các thuật toán và mô hình trí tuệ nhân tạo để phát hiện mã độc, các kết quả phân tích không thể đảm bảo chính xác tuyệt đối trong mọi trường hợp!</div>
+                """,
+                unsafe_allow_html=True
+            )
+      
+>>>>>>> 58fc52c (Cập nhật code: sửa bug/thêm tính năng XYZ)
 with tab3:
      # Hiển thị bản đồ Việt Nam với thông tin về mối đe dọa
         st.markdown('<div class="map-header">🗺️ Giám sát an ninh mạng quốc gia: Bản đồ Việt Nam</div>', unsafe_allow_html=True)
@@ -2830,9 +2945,12 @@ with tab4:
                 <img src="https://img.icons8.com/color/48/000000/linkedin.png" width="22">
             </a>
         </div>
+<<<<<<< HEAD
         <div style="margin-top:3px;color:#444;font-size:13px;">
             <small>⚠️ Kết quả chỉ tham khảo. Luôn kết hợp nhiều công cụ để đảm bảo an toàn tối đa.</small>
         </div>
+=======
+>>>>>>> 58fc52c (Cập nhật code: sửa bug/thêm tính năng XYZ)
     </div>
     """, unsafe_allow_html=True)
 
@@ -2840,8 +2958,15 @@ with tab4:
 if model is not None and class_names is not None:
     st.markdown(f"""
     <div style="text-align: center; color: #666; margin-top: 20px;">
+<<<<<<< HEAD
         <b> © 2024 - Huynh Hai Cong Huy</b>
     </div>
     """, unsafe_allow_html=True)
+=======
+        <b> © 2025 - Huynh Hai Cong Huy</b>
+    </div>
+    """, unsafe_allow_html=True)
+
+>>>>>>> 58fc52c (Cập nhật code: sửa bug/thêm tính năng XYZ)
 else:
     st.error("Mô hình chưa được tải thành công. Vui lòng kiểm tra đường dẫn đến file model.")
