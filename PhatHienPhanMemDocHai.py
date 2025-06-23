@@ -770,9 +770,7 @@ elif model_source == "Upload từ máy tính" and uploaded_model is not None:
     model, class_names = load_pytorch_model_from_upload(uploaded_model, device)
 
 # --- Tab chính ---
-<<<<<<< HEAD
 tab1, tab2, tab3, tab4 = st.tabs(["📄 Quét chương trình đơn lẻ", "📁 Quét nhanh chương trình trong thư mục", "💻 SOC VIỆT NAM", "ℹ️ Thông tin chung"])
-=======
 tab1, tab2, tab3, tab4 = st.tabs(["📄 Quét chương trình đơn lẻ", "📁 Quét nhanh chương trình trong thư mục", "💻 SOC Việt Nam", "ℹ️ Thông tin chung"])
 
 # --- Tab phân tích file đơn lẻ ---
@@ -1218,7 +1216,6 @@ with tab2:
                     with col4:
                         st.metric("Không chắc chắn", uncertain_count, delta=f"{uncertain_count/total_files*100:.1f}%" if total_files > 0 else "0%")
 
-<<<<<<< HEAD
                     # Tạo biểu đồ tròn
                     if total_files > 0:
                         benign_count = total_files - malware_count - uncertain_count
@@ -1237,7 +1234,6 @@ with tab2:
                             ax.set_title('Phân bố kết quả quét')
                             st.pyplot(fig)
                             plt.close()
-=======
                     # TÍNH NĂNG MỚI: Thêm biểu đồ phân bố loại mã độc
                     if results:
                         # Tất cả các code duyệt results nằm ở đây!
@@ -1482,9 +1478,6 @@ with tab2:
                     del st.session_state['scan_dir']
                 except:
                     pass
-<<<<<<< HEAD
-=======
-
             st.markdown(
                 """
                 <style>
