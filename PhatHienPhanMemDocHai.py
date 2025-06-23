@@ -774,7 +774,6 @@ elif model_source == "Upload từ máy tính" and uploaded_model is not None:
 tab1, tab2, tab3, tab4 = st.tabs(["📄 Quét chương trình đơn lẻ", "📁 Quét nhanh chương trình trong thư mục", "💻 SOC VIỆT NAM", "ℹ️ Thông tin chung"])
 =======
 tab1, tab2, tab3, tab4 = st.tabs(["📄 Quét chương trình đơn lẻ", "📁 Quét nhanh chương trình trong thư mục", "💻 SOC Việt Nam", "ℹ️ Thông tin chung"])
->>>>>>> 58fc52c (Cập nhật code: sửa bug/thêm tính năng XYZ)
 
 # --- Tab phân tích file đơn lẻ ---
 with tab1:
