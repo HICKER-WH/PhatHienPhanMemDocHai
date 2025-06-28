@@ -1527,7 +1527,7 @@ with tab3:
                 var map = L.map('map').setView([16.0583, 108.2772], 6);
                 // Thêm tile layer
                 L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {attribution: '© OpenStreetMap, © CartoDB'}).addTo(map);
-                // Dữ liệu mối đe dọa giả lập 63 tỉnh/thành Việt Nam 2024
+                // Dữ liệu mối đe dọa giả lập 63 tỉnh/thành Việt Nam 2025
                 var threatData = [
                     // Nhóm High (từ 700+)
                     {city: "TP. Hồ Chí Minh", lat: 10.7769, lng: 106.7009, threats: 2100, level: "high", malware: 750, phishing: 520, ddos: 315, other: 515},
@@ -2905,7 +2905,7 @@ with tab4:
         <div style="display: flex; align-items: center; justify-content: center; gap:13px;">
             <img src="https://img.icons8.com/color/48/000000/user-male-circle--v1.png" width="44">
             <div style="text-align:left;">
-                <b>© 2024 - Huỳnh Hải Công Huy</b><br>
+                <b>© 2025 - Huỳnh Hải Công Huy</b><br>
                 <span style="font-size:15px;">Trường ĐH Kỹ Thuật - Hậu Cần CAND</span>
             </div>
         </div>
